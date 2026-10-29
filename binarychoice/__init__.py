@@ -381,23 +381,30 @@ class Decision(Page):
 
             cards.append(dict(idx=idx,parts=parts))
         return dict(
+            cards=cards,
+            beginning=player.round_number <= 3,
+            show_discount=show_discount,
+            show_reviews=show_reviews
+        )
+      
+        #return dict(
             #shoeimage1='https://www.sportsdirect.com/images/products/' + str(shoepair[0]) + '_h.jpg',
             #shoeimage2='https://www.sportsdirect.com/images/products/' + str(shoepair[1]) + '_h.jpg',
             #shoeimage1='https://users.aalto.fi/ileppane/shoepictures2026/men/' + str(shoepair[0]) + '_h.jpg',
             #shoeimage2='https://users.aalto.fi/ileppane/shoepictures2026/women/' + str(shoepair[1]) + '_h.jpg',
-            shoeimage1=url + str(shoepair[0]) + '_h.jpg',
-            shoeimage2=url + str(shoepair[1]) + '_h.jpg',
-            beginning=player.round_number <= 3,
-            show_discount=player.condition >= 2,
-            show_reviews=player.condition >= 3,
+        #    shoeimage1=url + str(shoepair[0]) + '_h.jpg',
+        #    shoeimage2=url + str(shoepair[1]) + '_h.jpg',
+        #    beginning=player.round_number <= 3,
+        #    show_discount=player.condition >= 2,
+        #    show_reviews=player.condition >= 3,
             # these are empty (None) in blocks where the attribute is not shown, hence field_maybe_none
-            discount1=player.field_maybe_none('thisround_discount1'),
-            discount2=player.field_maybe_none('thisround_discount2'),
-            stars1=player.field_maybe_none('thisround_stars1'),
-            stars2=player.field_maybe_none('thisround_stars2'),
-            nreviews1=player.field_maybe_none('thisround_nreviews1'),
-            nreviews2=player.field_maybe_none('thisround_nreviews2'),
-        )
+        #    discount1=player.field_maybe_none('thisround_discount1'),
+        #    discount2=player.field_maybe_none('thisround_discount2'),
+        #    stars1=player.field_maybe_none('thisround_stars1'),
+        #    stars2=player.field_maybe_none('thisround_stars2'),
+        #    nreviews1=player.field_maybe_none('thisround_nreviews1'),
+        #    nreviews2=player.field_maybe_none('thisround_nreviews2'),
+        #)
 
     @staticmethod
     def js_vars(player: Player):
