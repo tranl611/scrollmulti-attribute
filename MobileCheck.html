@@ -1,0 +1,47 @@
+{{ extends "global/Page.html" }}
+{{ block title }}Device compatibility test{{ endblock }}
+
+{{ block content }}
+
+<p>
+    Touch the screen
+</p>
+<p>
+    If you do not see a button to move on to the next page, then your device is not compatible with the study
+</p>
+<center>
+    <span id="hei" hidden></span><br>
+    <span id="wid" hidden></span><br>
+    <input type="hidden" name="screenwidth" id="id_screenwidth">
+    <input type="hidden" name="screenheight" id="id_screenheight">
+
+    <input type="hidden" name="ismobile_touchstart" id="id_ismobile_touchstart">
+    <button id="mobileokbutton" class="otree-btn-next btn btn-primary">Next</button>
+</center>
+
+<br><br>
+{{ if pilot == 1 }}
+    <button class="otree-btn-next btn btn-primary">(pilot)</button>
+{{ endif }}
+
+{{ endblock }}
+
+{{ block scripts }}
+<script>
+// https://codeburst.io/the-only-way-to-detect-touch-with-javascript-7791a3346685
+document.addEventListener('touchstart', function() {
+	document.getElementById('id_ismobile_touchstart').value = 1;
+  	document.getElementById('mobileokbutton').style.visibility = 'visible';
+});
+
+// https://stackoverflow.com/questions/65462643/how-to-get-the-real-screen-sizescreen-resolution-by-using-js
+const realWidth = window.screen.width * window.devicePixelRatio;
+const realHeight = window.screen.height * window.devicePixelRatio;
+document.getElementById("wid").innerHTML = realWidth;
+document.getElementById("hei").innerHTML = realHeight;
+
+document.getElementById('id_screenwidth').value = realWidth;
+document.getElementById('id_screenheight').value = realHeight;
+
+</script>
+{{ endblock }}

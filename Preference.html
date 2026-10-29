@@ -1,0 +1,199 @@
+{{ extends "global/Page.html" }}
+{{ block title }}Part 1: Product rating task{{ endblock }}
+
+{{ block content }}
+
+<p>
+    Here you will see a number of trainers to rate. Please consider only the <b>style and appearance</b> of the products. How likely would you wear them as everyday trainers? How much do you like their appearance?
+</p>
+<p>
+    Choose the point on the scale that best represents your opinion (-3 = Extremely unlikely to wear, 3 = Extremely likely to wear).
+</p>
+
+
+<br>
+
+
+{{ divs }}
+
+
+
+<center>
+
+    <div id="shoequestions">
+        <!-- javascript -->
+    </div>
+
+    <div id="test"></div>
+
+</center>
+
+<br><br>
+
+<input type="hidden" name="shoeratings" id="id_shoeratings">
+<center>
+    <button id="nextbutton" class="otree-btn-next btn btn-primary">Done</button>
+</center>    
+
+<br><br><br><br><br><br>
+
+{{ endblock }}
+
+{{ block scripts }}
+<script>
+
+const divelement = document.getElementById('shoequestions');
+
+for (let i = 0; i < js_vars.numberofshoes; i++) {
+
+  	const img = document.createElement('img');
+    img.src = js_vars.imagelist[i];
+	img.setAttribute("class", "fitting-image");
+  
+  	divelement.appendChild(img);
+    const brr = document.createElement('br');
+    divelement.appendChild(brr);
+  	//const textnode = document.createTextNode(i); // for testing
+	//divelement.appendChild(textnode);
+
+	const tbl = document.createElement("table");
+  	tbl.setAttribute('id', 'table'+i);
+  	//tbl.setAttribute('bordercolor', 'white');
+  	tbl.setAttribute('class', 'whitebordertable');
+	const tblBody = document.createElement("tbody");
+	const row = document.createElement("tr");
+
+  	for (let j = 0; j < 7; j++) { // 7 inputs on each question
+		//document.getElementById('test').innerHTML = js_vars.shoeorder[i].toString + j.toString;
+
+        const cell = document.createElement("td");
+		cell.setAttribute('width', '42px');
+      	const inputt = document.createElement("input");
+        inputt.setAttribute("type", "radio");
+        inputt.setAttribute("class", "form-check-input");
+        inputt.setAttribute("id", js_vars.shoeorder[i] + '_' + j);
+        inputt.setAttribute("name", js_vars.shoeorder[i]); 
+        inputt.setAttribute("value", j-3);
+
+      	cell.appendChild(inputt);
+
+      	row.appendChild(cell);
+
+    }
+
+  	const row2 = document.createElement("tr");
+
+    for (let j = 0; j < 7; j++) { // 7 inputs on each question
+        const cell2 = document.createElement("td");
+
+        const label = document.createElement('label');
+        label.setAttribute('for', js_vars.shoeorder[i] + '_' + j); // label for should be input id
+      	const labelnumber = document.createTextNode(j-3);
+      	label.appendChild(labelnumber);
+
+      	cell2.appendChild(label);
+      
+		row2.appendChild(cell2);
+
+    }
+
+  	tblBody.appendChild(row);
+  	tblBody.appendChild(row2);
+	tbl.appendChild(tblBody);
+	divelement.appendChild(tbl);
+	//tbl.setAttribute("width", "300px"); // set table attributes
+
+  	const brrr = document.createElement('br');
+  	const brrr2 = document.createElement('br');
+    divelement.appendChild(brrr);
+    divelement.appendChild(brrr2);
+  
+}
+
+for (let i = 0; i < js_vars.numberofshoes; i++) {  
+
+    const radioidm3 = js_vars.shoeorder[i] + '_' + 0; 
+    document.getElementById(radioidm3).onclick = function() {
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = -3; 
+        //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
+        document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
+        document.getElementById('test').innerHTML = '';
+    };
+
+    const radioidm2 = js_vars.shoeorder[i] + '_' + 1; 
+    document.getElementById(radioidm2).onclick = function() {
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = -2; 
+        //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
+        document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
+        document.getElementById('test').innerHTML = '';
+    };
+
+    const radioidm1 = js_vars.shoeorder[i] + '_' + 2; 
+    document.getElementById(radioidm1).onclick = function() {
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = -1; 
+        //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
+        document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
+        document.getElementById('test').innerHTML = '';
+    };
+
+    const radioid0 = js_vars.shoeorder[i] + '_' + 3;
+    document.getElementById(radioid0).onclick = function() {
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 0; 
+        //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
+        document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
+        document.getElementById('test').innerHTML = '';
+    };
+
+    const radioid1 = js_vars.shoeorder[i] + '_' + 4; 
+    document.getElementById(radioid1).onclick = function() {
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 1; 
+        //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
+        document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
+        document.getElementById('test').innerHTML = '';
+    };
+
+    const radioid2 = js_vars.shoeorder[i] + '_' + 5; 
+    document.getElementById(radioid2).onclick = function() {
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 2; 
+        //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
+        document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
+        document.getElementById('test').innerHTML = '';
+    };
+
+    const radioid3 = js_vars.shoeorder[i] + '_' + 6; 
+    document.getElementById(radioid3).onclick = function() {
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 3; 
+        //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
+        document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
+        document.getElementById('test').innerHTML = '';
+    };
+
+}
+
+
+// ADD EVENT LISTENER THAT LISTENS TO BUTTON CLICK, THEN AGGREGATE ALL DIV ID i'S INTO player.shoeratings
+function fclick() {
+
+    var shoepreferences = '[';
+	for (let i = 0; i < js_vars.numberofshoes; i++) {  
+
+        if (document.getElementById('shoe'.concat(i).concat('rating')).innerHTML == '') {
+        	document.getElementById('test').innerHTML = '<p><font color=red>Please check that all items are rated</font></p>';
+          	//document.getElementById('table' + i).setAttribute('bordercolor', 'red'); // set table attributes
+			document.getElementById('table' + i).setAttribute('class', 'redbordertable');
+			event.preventDefault();
+        }
+      	else {
+			shoepreferences += document.getElementById('shoe'.concat(i).concat('rating')).innerHTML + ',';
+        }
+    }
+  	shoepreferences = shoepreferences.slice(0, -1);
+  	shoepreferences += ']'
+    document.getElementById('id_shoeratings').value = shoepreferences;
+}
+
+var choicebutton = document.querySelector('#nextbutton');
+choicebutton.addEventListener('click', fclick);
+
+</script>
+{{ endblock }}

@@ -1,0 +1,43 @@
+{{ extends "global/Page.html" }}
+{{ block title }} {{ endblock }}
+
+{{ block content }}
+
+<p>
+    This study is conducted using your mobile device. Please make sure that you don't have any distractions. Turn off notifications and alarms. Keep your device in portrait mode.
+</p>
+<center>
+    <img src="{{ static 'my_folder/portraitmode.png' }}"/>
+</center>
+<br>
+<p>
+    By proceeding you consent to participate in this study. You understand that all data will be confidential. Your personal information will not be stored with the data. You are free to withdraw at any time without giving a reason.
+</p>
+
+<p>
+    Prolific Participant ID:
+</p>
+    {{ formfield player.prolificcode label="" }}
+<br>
+
+<p>
+    The study will begin when you click the Next button below.
+</p>
+
+<br>
+
+<center>
+    {{ next_button }}
+</center>
+
+<br>
+
+<p>
+    <a href="https://aaltofi-my.sharepoint.com/:b:/g/personal/ilkka_j_leppanen_aalto_fi1/EWj2sxaVsCZGv2cO5R0_LOcBN6ASPapLwjDa2dBW48NQHg?e=5Sx6ii" target="_blank">Privacy Notice</a><br>
+    <a href="https://aaltofi-my.sharepoint.com/:b:/g/personal/ilkka_j_leppanen_aalto_fi1/EcbVHpRrFjZBlTD8qaZneV8B7ZPEAw9hElO9xyKsFg8UnA?e=helkeA" target="_blank">Extended Information Sheet</a>
+</p>
+
+<br><br>
+
+
+{{ endblock }}

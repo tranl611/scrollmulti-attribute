@@ -1,0 +1,22 @@
+{{ extends "global/Page.html" }}
+{{ block title }}Instructions{{ endblock }}
+
+{{ block content }}
+
+<p>
+This study consists of two parts. In Part 1, you will be asked to express a preference for different kinds of trainers (sneaker shoes). In Part 2, you will be asked to make choices between pairs of trainers. 
+</p>
+
+<p>
+    We have trainers from both men's and women's categories, using the website of a large UK retailer (SportsDirect.com). We first ask you from which category you would like to see the trainers. This information is only used by the computer to choose trainers from either of the categories. It can be the same as your true gender identity but it does not have to be.
+    
+    {{ formfield 'gender' }}
+    
+</p>
+<br>
+<center>
+    {{ next_button }}
+</center>
+<br><br>
+
+{{ endblock }}

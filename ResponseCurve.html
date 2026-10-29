@@ -1,0 +1,106 @@
+{{ extends "global/Page.html" }}
+{{ block title }} {{ endblock }}
+
+{{ block content }}
+
+<p>
+    This is what your response curve looks like.
+</p>
+
+<center>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.1/chart.min.js"></script>
+    <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+
+    <br>
+    <p>
+        choice: {{ player.choice }}<br>
+        psiL: {{ player.psiL }}<br>
+        psiR: {{ player.psiR }}<br>
+        dwelltimeL: {{ player.dwelltimeL }}<br>
+        dwelltimeR: {{ player.dwelltimeR }}<br>
+        switchesLR: {{ player.switchesLR }}<br>
+        switchesRL: {{ player.switchesRL }}<br>
+        dectime: {{ player.dectime }}<br>
+        scrolltime: {{ player.scrolltime }}<br>
+        xdist: {{ player.xdist }}
+    </p>
+    <br>
+
+    {{ next_button }}
+
+</center>
+
+<br><br>
+
+{{ endblock }}
+
+{{ block scripts }}
+<script>
+const yValues = js_vars.y;
+const xValues = js_vars.x;
+
+var ctx = document.getElementById('myChart').getContext('2d');
+
+const data = xValues.map((value, index) => ({
+  x: value,
+  y: yValues[index]
+}));
+
+const config = { 
+            type: 'scatter', 
+            data: {
+                datasets: [{
+                  label: 'My Scatter Dataset',
+                  data: data,
+                  showLine: true, // This draws the line between points
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  borderWidth: 2,
+                  fill: false, // Do not fill under the line
+                }]
+			}, 
+            options: {
+                indexAxis: 'y',
+                legend: {display: false},
+                scales: {
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'time (ms)',
+                        },
+                        grid: {
+                            ticks: {min: -50, max:350},
+                            color: 'white',
+                        },
+                    },
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'scrollbar position (px)',
+                        },
+                        grid: {
+                            color: (context) => {
+                                if(context.tick.value === 150) {
+                                    return 'blue'
+                                }
+                            },
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    }
+                },
+            }
+};
+
+new Chart(ctx, config);
+
+
+</script>
+{{ endblock }}
