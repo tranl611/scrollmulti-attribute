@@ -204,6 +204,8 @@ class Player(BasePlayer):
     thisround_nreviews2 = models.IntegerField()
     reviews_placeholder = models.IntegerField()  # 1 = fake pilot reviews were shown
 
+    # Randomized vertical order of image and attributes
+    attr_order = models.StringField()
 
 # ---------------------------------------------------------------------------
 # PAGES
@@ -346,6 +348,21 @@ class PreDecision(Page):
         player.thisround_nreviews2 = attrs.get('nreviews2')
         player.reviews_placeholder = int(use_placeholder and player.condition >= 3)
 
+        # Randomize the vertical order of the elements.
+        # The same order is used for both shoe cards in this round.
+        order = ['picture']
+
+        if player.condition >= 2:
+            order.append('discount')
+
+        if player.condition >= 3:
+            order.append('stars')
+
+        random.shuffle(order)
+
+        # Save the order in the dataset.
+        player.attr_order = str(order)
+
 
 class Decision(Page):
     form_model = 'player'
@@ -363,21 +380,30 @@ class Decision(Page):
 
         show_discount = player.condition >= 2
         show_reviews = player.condition >= 3
+
+        # Retrieve the randomized order saved for this round.
+        order = ast.literal_eval(player.attr_order)
       
         # Build the two cards in their existing left-to-right order.
         cards = []
 
         for idx, shoe_id in enumerate(shoepair, start=1):
-            parts = [dict(kind='picture', image=url + str(shoe_id) + '_h.jpg')]
+            available_parts = [dict(kind='picture', image=url + str(shoe_id) + '_h.jpg')]
 
             if show_discount:
-                discount = player.field_maybe_none(f'thisround_discount{idx}')
-                parts.append(dict(kind='discount', discount=discount))
+                available_parts['discount'] = player.field_maybe_none(f'thisround_discount{idx}')
+                #parts.append(dict(kind='discount', discount=discount))
 
             if show_reviews:
-                stars = player.field_maybe_none(f'thisround_stars{idx}')
+                available_parts['stars'] = player.field_maybe_none(f'thisround_stars{idx}')
                 nreviews = player.field_maybe_none(f'thisround_nreviews{idx}')
-                parts.append(dict(kind='stars', stars=stars, nreviews=nreviews))
+                #parts.append(dict(kind='stars', stars=stars, nreviews=nreviews))
+
+            # Apply the same randomized order to both cards.
+            parts = [
+                available_parts[kind]
+                for kind in order
+            ]
 
             cards.append(dict(idx=idx,parts=parts))
         return dict(
