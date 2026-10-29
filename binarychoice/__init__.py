@@ -270,8 +270,15 @@ class Preference(Page):
     def js_vars(player: Player):
         shoeorder = ast.literal_eval(player.shoeorder)
 
+        player1 = player.in_round(1)
+
+        if player1.gender == 'male': url = 'https://users.aalto.fi/ileppane/shoepictures2026/men/'
+        else: url = 'https://users.aalto.fi/ileppane/shoepictures2026/women/'
+
+        imagelist = [url + str(x) + '_h.jpg' for x in shoeorder]
+      
         #imagelist = ["https://www.sportsdirect.com/images/products/" + str(x) + "_h.jpg" for x in shoeorder]
-        imagelist = ["https://users.aalto.fi/~ileppane/shoepictures2026/" + str(x) + "_h.jpg" for x in shoeorder] 
+        #imagelist = ["https://users.aalto.fi/~ileppane/shoepictures2026/" + str(x) + "_h.jpg" for x in shoeorder] 
 
         return dict(numberofshoes=len(shoeorder), shoeorder=shoeorder, imagelist=imagelist)
 
