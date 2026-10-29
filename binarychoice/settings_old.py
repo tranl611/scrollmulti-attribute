@@ -3,14 +3,9 @@ SESSION_CONFIG_DEFAULTS = dict(real_world_currency_per_point=1, participation_fe
 SESSION_CONFIGS = [
 		dict(name='study1_shoes', 
 			num_demo_participants=None, 
-			app_sequence=['binarychoice_twobuttons'], 
+			app_sequence=['binarychoice'], 
 			prolificurl='', 
-			pilot=0), 
-		dict(name='study2', 
-			num_demo_participants=None, 
-			app_sequence=['moneyrisk'], 
-			pilot=0, 
-			prolificurl='')
+			pilot=0)
 ]
 LANGUAGE_CODE = 'en'
 REAL_WORLD_CURRENCY_CODE = 'USD'
