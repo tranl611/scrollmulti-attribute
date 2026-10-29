@@ -7,17 +7,24 @@
    lines. Heights do not affect the horizontal scroll geometry (300px cards, 150px midpoint).
    The same taller card is used in all three blocks so that only the content differs. */	
 .container3 { height: auto; }
-.element3 { height: auto; min-height: 340px; vertical-align: top; text-align: center;}
+.element3 { height: auto; min-height: 340px; vertical-align: top; text-align: center;
+		  display: flex; align-items: center; justify-content: center;}
 /* attribute lines sit inside #choicetext1/2, so they inherit the "hidden until scrolling" visibility */
-.attr { display: block; width: 230px; text-align: center; margin: 12px auto 0 auto; }
+
+/* Keep the content together as one group */
+#choicetext1,
+#choicetext2 {display: flex; flex-direction: column; align-items: center; 
+			  justify-content: center; width: 100%;}
 /* centre the picture and the lines under it inside the 300px card (styles.css left-aligns the picture) */
-/*.element3 { text-align: center; }*/
+/*.element3 { text-align: center; }
 :root { --img-up: 0px; }
-.element3 { min-height: calc(340px - var(--img-up)); }
+.element3 { min-height: calc(340px - var(--img-up)); }*/
 /*.imgwrap { display: block; width: 230px; margin: 0 auto; overflow: hidden; }
-.imgwrap .fitting-image2 { display: block; margin: calc(-1 * var(--img-up)) 0 0 0; }
-.fitting-image2 { display: block; margin: 0 auto; }*/
-.fitting-image2 { display: block; margin-left: auto; margin-right: auto;}
+.imgwrap .fitting-image2 { display: block; margin: calc(-1 * var(--img-up)) 0 0 0; }*/
+.fitting-image2 { display: block; margin: 0 auto; }
+.attr { display: block; width: 230px; text-align: center; margin: 12px auto 0 auto; }
+
+/*.fitting-image2 { display: block; margin-left: auto; margin-right: auto;}
 .fitting-image2 + br { display: none; }*/
 .attr-discount { font-weight: bold; color: #c62828; font-size: 1.3em; }
 .stars { display: inline-block; font-size: 1.3em; line-height: 1; }
