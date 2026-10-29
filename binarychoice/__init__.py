@@ -270,7 +270,8 @@ class Preference(Page):
     def js_vars(player: Player):
         shoeorder = ast.literal_eval(player.shoeorder)
 
-        imagelist = ["https://www.sportsdirect.com/images/products/" + str(x) + "_h.jpg" for x in shoeorder]
+        #imagelist = ["https://www.sportsdirect.com/images/products/" + str(x) + "_h.jpg" for x in shoeorder]
+        imagelist = ["https://users.aalto.fi/~ileppane/shoepictures2026/" + str(x) + "_h.jpg" for x in shoeorder] 
 
         return dict(numberofshoes=len(shoeorder), shoeorder=shoeorder, imagelist=imagelist)
 
