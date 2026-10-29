@@ -354,12 +354,20 @@ class Decision(Page):
     @staticmethod
     def vars_for_template(player: Player):
         shoepair = ast.literal_eval(player.thisround_shoepair)
+        player1 = player.in_round(1)
+
+        if player1.gender == 'male':
+          url = 'https://users.aalto.fi/ileppane/shoepictures2026/men/'
+        else:
+          url = 'https://users.aalto.fi/ileppane/shoepictures2026/women/'
 
         return dict(
             #shoeimage1='https://www.sportsdirect.com/images/products/' + str(shoepair[0]) + '_h.jpg',
             #shoeimage2='https://www.sportsdirect.com/images/products/' + str(shoepair[1]) + '_h.jpg',
-            shoeimage1='https://users.aalto.fi/ileppane/shoepictures2026/men/' + str(shoepair[0]) + '_h.jpg',
-            shoeimage2='https://users.aalto.fi/ileppane/shoepictures2026/women/' + str(shoepair[1]) + '_h.jpg',
+            #shoeimage1='https://users.aalto.fi/ileppane/shoepictures2026/men/' + str(shoepair[0]) + '_h.jpg',
+            #shoeimage2='https://users.aalto.fi/ileppane/shoepictures2026/women/' + str(shoepair[1]) + '_h.jpg',
+            shoeimage1=url + str(shoepair[0]) + '_h.jpg',
+            shoeimage2=url + str(shoepair[1]) + '_h.jpg',
             beginning=player.round_number <= 3,
             show_discount=player.condition >= 2,
             show_reviews=player.condition >= 3,
