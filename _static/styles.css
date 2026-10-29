@@ -1,0 +1,296 @@
+html {
+/* prevent page bounce;  */
+/*  position: fixed;*/
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+/*  overscroll-behavior: none; /* prevent bounce */
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #fff; /*#fff5f5;*/
+  overflow: auto;
+}
+
+td {
+  text-align: center;
+}
+
+#slider2div {
+  visibility: hidden;
+}
+
+#testradio1, #testradio2, #testslider2 {
+  color: red;
+}
+
+.otree-btn-next {
+  font-size: 20px;
+}
+
+p, b, li, label {
+  font-size: 20px;
+}
+
+.otree-timer {
+  display: none;
+}
+
+.page-header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-top: 0px;
+}
+
+/* for Preference page */
+.fitting-image {
+  width: 300px;
+  object-fit: cover;
+  object-position: 100% bottom;
+}
+
+.fitting-image .watches {
+  height: 500px;
+}
+
+.fitting-image .shoes {
+  height: 200px;
+  
+}
+
+/* for Decision page */
+.fitting-image2 {
+  width: 230px;
+  object-fit: cover;
+  object-position: 100% bottom;
+}
+
+.fitting-image2w {
+  width: 230px;
+  height: 220px;
+  object-fit: cover;
+  object-position: 15px bottom;
+}
+
+.fitting-image .watches { /* not in use */
+  height: 220px;
+}
+
+.fitting-image .shoes {
+  height: 200px;
+  width: 200px;
+}
+
+.whitebordertable {
+  width: 300px;
+  border: 3px solid;
+  border-color: #fff;
+}
+
+.redbordertable {
+  width: 300px;
+  border: 3px solid;
+  border-color: red;
+}
+
+#question2, #question3 {
+  visibility: hidden;
+}
+
+#mobileokbutton, #choicetext, #choicetext1, #choicetext2, #choicetext3 {
+	visibility: hidden;
+}
+
+#choicebutton, #choicebutton1, #choicebutton2 {
+  visibility: hidden;
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 25px;
+
+}
+
+#choicebutton1:hover, #choicebutton2:hover {
+  background-color: #86ca89;
+  color: white;
+}
+
+#choicebutton3 { /* this is in the Preference page */
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+
+}
+
+#choiceindicator {
+  visibility: hidden;
+  text-align: center;
+}
+
+.instrcontainer { /* container for instructions */
+  width: 100%;
+  height: 610px;
+  padding: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 0px;
+  overflow: scroll;
+  position: relative;
+}
+
+.container2 { /* for apps where scrolling is vertical, this is named container2 because otree has class container */
+  width: 300px;
+  height: 260px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px;
+  border: 2px solid #333;
+  overflow: scroll;
+  position: relative;
+}
+
+
+.container3 { /* for apps where scrolling is horizontal */
+  width: 300px;
+  height: 290px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0px; /* changed from 8px on 21/9/2024; */ 
+  overflow: auto; /* scroll */
+  position: relative;
+  white-space: nowrap;
+
+}
+
+.element3 { /* this is for horizontal scrolling apps */  
+  margin: auto;
+  border: 1px solid;
+  padding: 15px;
+  width: 300px; /* changed from 275 on 21/9/2024 */
+  height: 250px;
+  /*scroll-margin: was 275px, removed on 21/9/2024 */
+/*  scroll-snap-align: center;  ADD THIS WITH JAVASCRIPT after the scrolling starts */
+  scroll-snap-stop: always; /* The effect of this property can be noticed on devices with a touchpad. Try to scroll through all items with a single swing. Value 'normal' should pass through all pages, while 'always' will stop at the second page.*/
+  font-size: 20px;
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.y-mandatory {
+  scroll-snap-type: y mandatory;
+}
+
+.y-scroll .element {
+  margin-bottom: 10px;
+  background-color: #f5f5f5;
+}
+
+.x-mandatory {
+  scroll-snap-type: x mandatory;
+}
+
+.x-scroll .element3 {
+  margin-bottom: 10px;
+  background-color: #fff; /*#f5f5f5;*/
+}
+
+.snap-stop-always {
+  scroll-snap-stop: always;
+}
+
+.element-instr { /* this is a copy of the element box but for the instruction page */
+  margin: auto;
+  background-color: #ddd;
+  padding: 15px;  
+  width: 275px;
+  height: 240px;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+#generaldiv { /* this contains the general info for the round so it should have the same width as container2 or container3 */
+  margin: auto;
+  width: 200px;
+  height: 50px;
+  text-align: center;
+  font-size: 16px;
+  /*visibility: hidden;*/
+}
+
+#instructions_wrapperdiv { /* this contains the text and the bucket so it should have the same width as container2 or container3 */
+  margin: auto;
+  width: 300px;
+  text-align: center;
+  font-size: 16px;
+}
+
+
+
+/* the slider on the SWING page */
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+.slidecontainer {
+  width: 80%;
+}
+
+
+/* for the money-risk app */
+#boxdiv {
+  background-color: #eee;
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  position: relative;
+}
+
+#valuediv_U, #valuediv_L, #valuediv_UL, #valuediv_LL, #valuediv_UR, #valuediv_LR {
+  background-color: blue;
+  width: 98px;
+  border: 0px;
+  position: absolute;
+  bottom: 0;
+}
