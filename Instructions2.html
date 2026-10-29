@@ -1,0 +1,25 @@
+{{ extends "global/Page.html" }}
+{{ block title }} {{ endblock }}
+
+{{ block content }}
+
+
+<h1>
+    Part 2: Decision task
+</h1>
+
+<p>
+    In the next section, you will be presented with tasks where you need to decide between the presented options. These options consist of the products that you rated in Part 1, and they are randomly paired. There will be a total of {{ C.NUM_ROUNDS }} choices, divided into {{ C.NUM_BLOCKS }} blocks of {{ C.BLOCK_LENGTH }} choices. Before each new block you will receive instructions. On each round choose the option you prefer.
+</p>
+<p>
+    <b>In this first block ({{ C.BLOCK_LENGTH }} choices)</b> you should make your decisions based on style and appearance of the options only.
+</p>
+
+<br><br>
+<center>
+    {{ next_button }}
+</center>
+<br><br>
+
+
+{{ endblock }}

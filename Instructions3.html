@@ -1,0 +1,19 @@
+{{ extends "global/Page.html" }}
+{{ block title }}Part 2: Block 2 of {{ C.NUM_BLOCKS }}{{ endblock }}
+
+{{ block content }}
+
+<p>
+    In the next {{ C.BLOCK_LENGTH }} choices, each product will also show a <b>discount</b>, for example "40% off". The discount is the percentage taken off the normal price of the product: 0% means no discount.
+</p>
+<p>
+    On each round, choose the option you prefer, taking into account <b>all of the information</b> shown: the style and appearance of the product and its discount.
+</p>
+
+<br><br>
+<center>
+    {{ next_button }}
+</center>
+<br><br>
+
+{{ endblock }}

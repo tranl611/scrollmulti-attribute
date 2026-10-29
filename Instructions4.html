@@ -1,0 +1,19 @@
+{{ extends "global/Page.html" }}
+{{ block title }}Part 2: Block 3 of {{ C.NUM_BLOCKS }}{{ endblock }}
+
+{{ block content }}
+
+<p>
+    In the final {{ C.BLOCK_LENGTH }} choices, each product will show its <b>discount</b> as before, and in addition its <b>star reviews</b>: the average rating given by customers who have bought the product (out of 5 stars), and the number of customer reviews.
+</p>
+<p>
+    On each round, choose the option you prefer, taking into account <b>all of the information</b> shown: the style and appearance of the product, its discount, and its star reviews.
+</p>
+
+<br><br>
+<center>
+    {{ next_button }}
+</center>
+<br><br>
+
+{{ endblock }}
