@@ -388,22 +388,24 @@ class Decision(Page):
         cards = []
 
         for idx, shoe_id in enumerate(shoepair, start=1):
-            available_parts = [dict(kind='picture', image=url + str(shoe_id) + '_h.jpg')]
+            available_parts = {'picture': {'kind': 'picture', 'image': url + str(shoe_id) + '_h.jpg'}}
+            #available_parts = [dict(kind='picture', image=url + str(shoe_id) + '_h.jpg')]
 
             if show_discount:
-                available_parts['discount'] = player.field_maybe_none(f'thisround_discount{idx}')
+                available_parts['discount'] = {'kind': 'discount', 
+                                               'discount': player.field_maybe_none(f'thisround_discount{idx}')}
+                #available_parts['discount'] = player.field_maybe_none(f'thisround_discount{idx}')
                 #parts.append(dict(kind='discount', discount=discount))
 
             if show_reviews:
-                available_parts['stars'] = player.field_maybe_none(f'thisround_stars{idx}')
-                nreviews = player.field_maybe_none(f'thisround_nreviews{idx}')
+                available_parts['stars'] = {'kind': 'stars', 'stars': player.field_maybe_none(f'thisround_stars{idx}'),
+                                            'nreviews': player.field_maybe_none(f'thisround_nreviews{idx}')}
+                #available_parts['stars'] = player.field_maybe_none(f'thisround_stars{idx}')
+                #nreviews = player.field_maybe_none(f'thisround_nreviews{idx}')
                 #parts.append(dict(kind='stars', stars=stars, nreviews=nreviews))
 
             # Apply the same randomized order to both cards.
-            parts = [
-                available_parts[kind]
-                for kind in order
-            ]
+            parts = [available_parts[kind] for kind in order]
 
             cards.append(dict(idx=idx,parts=parts))
         return dict(
