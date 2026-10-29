@@ -361,6 +361,25 @@ class Decision(Page):
         else:
           url = 'https://users.aalto.fi/ileppane/shoepictures2026/women/'
 
+        show_discount = player.condition >= 2
+        show_reviews = player.condition >= 3
+      
+        # Build the two cards in their existing left-to-right order.
+        cards = []
+
+        for idx, shoe_id in enumerate(shoepair, start=1):
+            parts = [dict(kind='picture', image=url + str(shoe_id) + '_h.jpg')]
+
+            if show_discount:
+                discount = player.field_maybe_none(f'thisround_discount{idx}')
+                parts.append(dict(kind='discount', discount=discount))
+
+            if show_reviews:
+                stars = player.field_maybe_none(f'thisround_stars{idx}')
+                nreviews = player.field_maybe_none(f'thisround_nreviews{idx}')
+                parts.append(dict(kind='stars', stars=stars, nreviews=nreviews))
+
+            cards.append(dict(idx=idx,parts=parts))
         return dict(
             #shoeimage1='https://www.sportsdirect.com/images/products/' + str(shoepair[0]) + '_h.jpg',
             #shoeimage2='https://www.sportsdirect.com/images/products/' + str(shoepair[1]) + '_h.jpg',
