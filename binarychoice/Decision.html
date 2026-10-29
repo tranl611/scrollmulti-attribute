@@ -1,0 +1,191 @@
+{{ extends "global/Page.html" }}
+{{ block title }} {{ endblock }}
+
+{{ block styles }}
+<style>
+/* styles.css fixes the card at 250px high and the container at 290px, which would clip the extra
+   lines. Heights do not affect the horizontal scroll geometry (300px cards, 150px midpoint).
+   The same taller card is used in all three blocks so that only the content differs. */
+.container3 { height: auto; }
+.element3 { height: auto; min-height: 340px; vertical-align: top; }
+/* attribute lines sit inside #choicetext1/2, so they inherit the "hidden until scrolling" visibility */
+.attr { display: block; width: 230px; text-align: center; margin-top: 6px; }
+.attr-discount { font-weight: bold; color: #c62828; font-size: 1.15em; }
+.stars { display: inline-block; font-size: 1.3em; line-height: 1; }
+.stars::before {
+    content: '★★★★★';
+    background: linear-gradient(90deg, #f5a623 calc(var(--rating) / 5 * 100%), #cccccc calc(var(--rating) / 5 * 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.reviews-text { display: block; font-size: 0.85em; color: #555555; }
+</style>
+{{ endblock }}
+
+{{ block content }}
+
+
+<div id="generaldiv">
+    {{ if player.round_number < 3 }}
+        <p>
+            Swipe the boxes
+        </p>
+    {{ endif }}
+</div>
+
+<br>
+<div id="myDIV" class="container3 x-scroll x-mandatory" onscroll="scrolltrack()">
+    <div class="element3">
+
+        <span id="choicetext1">
+            <img src="{{ shoeimage1 }}" class="fitting-image2"><br>
+            {{ if show_discount }}
+                <span class="attr attr-discount">{{ discount1 }}% off</span>
+            {{ endif }}
+            {{ if show_reviews }}
+                <span class="attr">
+                    <span class="stars" style="--rating: {{ stars1 }}"></span>
+                    <span class="reviews-text">{{ stars1 }} / 5 ({{ nreviews1 }} reviews)</span>
+                </span>
+            {{ endif }}
+        </span>
+    </div>
+    <div class="element3">
+        <span id="choicetext2">
+            <img src="{{ shoeimage2 }}" class="fitting-image2"><br>
+            {{ if show_discount }}
+                <span class="attr attr-discount">{{ discount2 }}% off</span>
+            {{ endif }}
+            {{ if show_reviews }}
+                <span class="attr">
+                    <span class="stars" style="--rating: {{ stars2 }}"></span>
+                    <span class="reviews-text">{{ stars2 }} / 5 ({{ nreviews2 }} reviews)</span>
+                </span>
+            {{ endif }}
+        </span>
+    </div>
+</div>
+
+<p hidden>
+    <span id="currentx"></span>
+</p>
+<p hidden>
+    <!-- these are used to store the values of x, y, and choice during scrolling
+         these values are retrieved when the choicebutton is clicked -->
+    <span id="y"></span><br>
+    <span id="x"></span><br>
+    <span id="choice"></span>
+</p>
+<center>
+    <p id="choiceindicator">
+        <span id="yourchoice"></span>
+        <br>
+        <br>
+            {{ if beginning }} Your choice: {{ endif }}
+    </p>
+
+    <button id="choicebutton1" name="choice" value="1">A</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="choicebutton2" name="choice" value="2">B</button>
+</center>
+
+<input type="hidden" name="y" id="id_y">
+<input type="hidden" name="time_endscrolling" id="id_time_endscrolling">
+<input type="hidden" name="x" id="id_x">
+<input type="hidden" name="time_startscrolling" id="id_time_startscrolling">
+<input type="hidden" name="dectime_end" id="id_dectime_end">
+<input type="hidden" name="lastdwell" id="id_lastdwell">
+
+
+{{ endblock }}
+
+{{ block scripts }}
+<script>
+
+
+/*
+	randomise the initial position of the scroll bar so that the players
+	do not have a tendency to choose the initially shown option
+*/
+const element = document.getElementById("myDIV");
+const initposition = 150;
+element.scrollLeft = initposition;
+
+
+/*
+	this function tracks the position of the scrollbar and it is called whenever the scrollbar position changes
+    (about 20 times per second)
+	i.e. this sets values for player.x and player.y
+    the x-coordinates are the locations of the scrollbar
+    the y-coordinates are the time stamps when the x-coordinates are recorded
+*/
+function scrolltrack() {
+  	var d = new Date();
+	const element = document.getElementById("myDIV");
+    let x = element.scrollLeft;
+
+  	/*
+    	the below lines make the information appear only after a bit (3 px) of scrolling
+    */
+	if (Math.abs(x.toFixed() - initposition) > 3) {
+		document.getElementById("choicetext1").style.visibility = 'visible';
+      	document.getElementById("choicetext2").style.visibility = 'visible';
+      	document.getElementById("generaldiv").style.visibility = 'visible';
+        document.getElementById("choicebutton1").style.visibility = 'visible';
+        document.getElementById("choicebutton2").style.visibility = 'visible';
+        document.getElementById("choiceindicator").style.visibility = 'visible';
+
+		// startscrolling is recorded only when these elements are made visible
+      	if (!(document.getElementById('id_time_startscrolling').value)) {
+            // the below is saved as a string instead of float because Python (pandas)
+            // has problems reading large numbers from csv files
+            document.getElementById('id_time_startscrolling').value = String(d.getTime());
+        }
+        // subtract here time_startscrolling from y
+        var startscrolling = document.getElementById('id_time_startscrolling').value;
+        // the below line adds time as y-coordinate into a list of y-coordinates separated by ','
+        document.getElementById("y").innerHTML += d.getTime() - startscrolling + ',';
+        document.getElementById("id_time_endscrolling").value = String(d.getTime()); // absolute time, this is updated until scrolling stops
+
+	}
+
+  	// the below line adds the current x-coordinate into a list of x-coordinates separated by ','
+  	document.getElementById("x").innerHTML += x.toFixed() + ',';
+	document.getElementById("currentx").innerHTML = x.toFixed(); // just for testing
+
+  	/*
+    	the below lines change the choice indicator div on the page,
+        i.e. as you scroll from option to another the choice indicator changes
+    */
+  	if (x.toFixed() > 150) {
+    	document.getElementById("choice").innerHTML = 2;
+        document.getElementById("yourchoice").innerHTML = js_vars.choice2;
+
+    } else {
+        document.getElementById("choice").innerHTML = 1;
+        document.getElementById("yourchoice").innerHTML = js_vars.choice1;
+    }
+
+
+}
+
+var choicebutton1 = document.querySelector('#choicebutton1');
+var choicebutton2 = document.querySelector('#choicebutton2');
+
+/*
+	the below function is run when the choicebutton is clicked
+    i.e. this sends the information that is saved in the page
+*/
+function fchoice() {
+ 	var d = new Date();
+  	document.getElementById('id_x').value = document.getElementById('x').innerHTML;
+  	document.getElementById('id_y').value = document.getElementById('y').innerHTML;
+    document.getElementById('id_dectime_end').value = d.getTime();
+  	document.getElementById('id_lastdwell').value = document.getElementById('choice').innerHTML;
+}
+
+choicebutton1.addEventListener("click", fchoice);
+choicebutton2.addEventListener("click", fchoice);
+</script>
+{{ endblock }}
