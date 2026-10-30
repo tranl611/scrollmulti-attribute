@@ -117,7 +117,7 @@ def build_pairs(shoeorder, shoeratings, block_length=C.BLOCK_LENGTH, num_blocks=
         for b in shoeorder:
             if a != b:
                 d = rating[a] - rating[b]
-                if -3 <= d <= 3:
+                if -6 <= d <= 6:
                     bydiff[d].append((a, b))
     available = [d for d in levels_all if bydiff[d]]
 
