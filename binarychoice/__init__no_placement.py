@@ -111,7 +111,7 @@ def build_pairs(shoeorder, shoeratings, block_length=C.BLOCK_LENGTH, num_blocks=
     """
     rating = dict(zip(shoeorder, shoeratings))
     #levels_all = list(range(-3, 4))
-    levels_all = list(range(1, 8))
+    levels_all = list(range(-6, 7))
     bydiff = {d: [] for d in levels_all}
     for a in shoeorder:
         for b in shoeorder:
