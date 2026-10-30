@@ -110,7 +110,8 @@ def build_pairs(shoeorder, shoeratings, block_length=C.BLOCK_LENGTH, num_blocks=
     The order of pairs is shuffled within a block, never across blocks.
     """
     rating = dict(zip(shoeorder, shoeratings))
-    levels_all = list(range(-3, 4))
+    #levels_all = list(range(-3, 4))
+    levels_all = list(range(1, 8))
     bydiff = {d: [] for d in levels_all}
     for a in shoeorder:
         for b in shoeorder:
