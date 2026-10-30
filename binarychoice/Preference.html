@@ -73,7 +73,8 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
         inputt.setAttribute("class", "form-check-input");
         inputt.setAttribute("id", js_vars.shoeorder[i] + '_' + j);
         inputt.setAttribute("name", js_vars.shoeorder[i]); 
-        inputt.setAttribute("value", j-3);
+        //inputt.setAttribute("value", j-3);
+		inputt.setAttribute("value", j+1);
 
       	cell.appendChild(inputt);
 
@@ -88,7 +89,8 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
 
         const label = document.createElement('label');
         label.setAttribute('for', js_vars.shoeorder[i] + '_' + j); // label for should be input id
-      	const labelnumber = document.createTextNode(j-3);
+      	//const labelnumber = document.createTextNode(j-3);
+		const labelnumber = document.createTextNode(j+1);
       	label.appendChild(labelnumber);
 
       	cell2.appendChild(label);
@@ -114,7 +116,7 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
 
     const radioidm3 = js_vars.shoeorder[i] + '_' + 0; 
     document.getElementById(radioidm3).onclick = function() {
-        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = -3; 
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 1; 
         //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
         document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
         document.getElementById('test').innerHTML = '';
@@ -122,7 +124,7 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
 
     const radioidm2 = js_vars.shoeorder[i] + '_' + 1; 
     document.getElementById(radioidm2).onclick = function() {
-        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = -2; 
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 2; 
         //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
         document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
         document.getElementById('test').innerHTML = '';
@@ -130,7 +132,7 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
 
     const radioidm1 = js_vars.shoeorder[i] + '_' + 2; 
     document.getElementById(radioidm1).onclick = function() {
-        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = -1; 
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 3; 
         //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
         document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
         document.getElementById('test').innerHTML = '';
@@ -138,7 +140,7 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
 
     const radioid0 = js_vars.shoeorder[i] + '_' + 3;
     document.getElementById(radioid0).onclick = function() {
-        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 0; 
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 4; 
         //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
         document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
         document.getElementById('test').innerHTML = '';
@@ -146,7 +148,7 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
 
     const radioid1 = js_vars.shoeorder[i] + '_' + 4; 
     document.getElementById(radioid1).onclick = function() {
-        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 1; 
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 5; 
         //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
         document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
         document.getElementById('test').innerHTML = '';
@@ -154,7 +156,7 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
 
     const radioid2 = js_vars.shoeorder[i] + '_' + 5; 
     document.getElementById(radioid2).onclick = function() {
-        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 2; 
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 6; 
         //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
         document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
         document.getElementById('test').innerHTML = '';
@@ -162,7 +164,7 @@ for (let i = 0; i < js_vars.numberofshoes; i++) {
 
     const radioid3 = js_vars.shoeorder[i] + '_' + 6; 
     document.getElementById(radioid3).onclick = function() {
-        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 3; 
+        document.getElementById('shoe'.concat(i).concat('rating')).innerHTML = 7; 
         //document.getElementById('table' + i).setAttribute('bordercolor', 'white'); // set table attributes
         document.getElementById('table' + i).setAttribute('class', 'whitebordertable');
         document.getElementById('test').innerHTML = '';
