@@ -138,6 +138,25 @@ def build_pairs(shoeorder, shoeratings, block_length=C.BLOCK_LENGTH, num_blocks=
         pairs += block_pairs
     return pairs
 
+# What is shown on each card in each block
+ATTRIBUTES_BY_CONDITION = {1: ['picture'], 2: ['picture', 'discount'], 3: ['picture', 'discount', 'stars']}
+
+
+def build_attribute_orders(block_length=C.BLOCK_LENGTH, num_blocks=C.NUM_BLOCKS, rng=random):
+    """
+    One top-to-bottom order of the attributes for every round (a list of lists, block by block).
+    Within each block every possible order is used equally often (block 2: 2 orders, block 3: 6 orders).
+    If block_length is not a multiple of the number of orders, the leftover rounds get randomly chosen orders.
+    The sequence is shuffled within each block, so the participant cannot predict the next order.
+    """
+    all_orders = []
+    for condition in range(1, num_blocks + 1):
+        perms = [list(q) for q in itertools.permutations(ATTRIBUTES_BY_CONDITION[condition])]
+        reps, extra = divmod(block_length, len(perms))
+        block = perms * reps + rng.sample(perms, extra)
+        rng.shuffle(block)
+        all_orders += block
+    return all_orders
 
 def draw_attributes(pair, condition, use_placeholder, rng=random):
     """
@@ -299,6 +318,7 @@ class Preference(Page):
         shoeratings = ast.literal_eval(player.shoeratings)
         player.shoepairs = str(build_pairs(shoeorder, shoeratings))
         # the pair for each round can now be found in player.in_round(1).shoepairs
+        player.attr_orders = str(build_attribute_orders())
 
 
 class Instructions2(Page):
@@ -358,18 +378,27 @@ class PreDecision(Page):
 
         # Randomize the vertical order of the elements.
         # The same order is used for both shoe cards in this round.
-        order = ['picture']
+        #order = ['picture']
 
-        if player.condition >= 2:
-            order.append('discount')
+        #if player.condition >= 2:
+        #    order.append('discount')
 
-        if player.condition >= 3:
-            order.append('stars')
+        #if player.condition >= 3:
+        #    order.append('stars')
 
-        random.shuffle(order)
+        #random.shuffle(order)
 
         # Save the order in the dataset.
-        player.attr_order = str(order)
+        #player.attr_order = str(order)
+        # Vertical order of the elements in this round, taken from the balanced list made in Preference.
+        # The same order is used for both shoe cards.
+        order = ast.literal_eval(player.in_round(1).attr_orders)[player.round_number - 1]
+
+        # Save the order and the position of each attribute (1 = top) in the dataset.
+        player.attr_order = '>'.join(order)
+        player.pos_picture = order.index('picture') + 1
+        player.pos_discount = order.index('discount') + 1 if 'discount' in order else None
+        player.pos_stars = order.index('stars') + 1 if 'stars' in order else None
 
 
 class Decision(Page):
@@ -390,7 +419,8 @@ class Decision(Page):
         show_reviews = player.condition >= 3
 
         # Retrieve the randomized order saved for this round.
-        order = ast.literal_eval(player.attr_order)
+        #order = ast.literal_eval(player.attr_order)
+        order = player.attr_order.split('>')
       
         # Build the two cards in their existing left-to-right order.
         cards = []
