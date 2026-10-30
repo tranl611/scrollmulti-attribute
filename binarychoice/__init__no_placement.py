@@ -205,7 +205,29 @@ class Player(BasePlayer):
     thisround_nreviews2 = models.IntegerField()
     reviews_placeholder = models.IntegerField()  # 1 = fake pilot reviews were shown
 
-
+def creating_session(subsession: Subsession):
+    """
+    Runs when a session is created. With real reviews (use_placeholder_reviews = 0) it refuses to create the
+    session if any shoe that can be shown has no usable review data, so the problem is found before anyone
+    starts instead of at round 61.
+    """
+    session = subsession.session
+    if session.config.get('use_placeholder_reviews', 0):
+        return
+    global _reviews_cache
+    _reviews_cache = None  # re-read shoe_reviews.csv so that the latest saved version is checked
+    reviews = load_reviews()
+    pilot = session.config['pilot']
+    shown = [s for gender in ('male', 'female') for s in shoe_list(gender, pilot)]
+    missing = [s for s in shown if s not in reviews]
+    invalid = [s for s in shown if s in reviews and not (0 <= reviews[s][0] <= 5 and reviews[s][1] >= 0)]
+    if missing or invalid:
+        raise RuntimeError(
+            f'shoe_reviews.csv is not ready: {len(missing)} shoe(s) with no review data {missing[:20]}'
+            f'{" ..." if len(missing) > 20 else ""}; {len(invalid)} shoe(s) with stars outside 0-5 or a negative '
+            f'number of reviews {invalid[:20]}. Fix the file, or use use_placeholder_reviews=1 for a pilot.'
+        )
+      
 # ---------------------------------------------------------------------------
 # PAGES
 # ---------------------------------------------------------------------------
