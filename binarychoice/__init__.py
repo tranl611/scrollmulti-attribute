@@ -3,6 +3,7 @@ import ast
 import csv
 import os
 import random
+import itertools
 
 c = cu
 
@@ -205,7 +206,14 @@ class Player(BasePlayer):
     reviews_placeholder = models.IntegerField()  # 1 = fake pilot reviews were shown
 
     # Randomized vertical order of image and attributes
+    #attr_order = models.StringField()
+    #attr_order = models.StringField()  # this round, top to bottom, e.g. 'star>picture>discount'
+    #attr_orders = models.StringField()  # round 1 only: the planned order for every round
     attr_order = models.StringField()
+    attr_orders = models.StringField()
+    pos_picture = models.IntegerField()  # 1 = topmost line on the card, 2 = second, 3 = third
+    pos_discount = models.IntegerField()  # empty when the attribute is not shown in this block
+    pos_stars = models.IntegerField()
 
 # ---------------------------------------------------------------------------
 # PAGES
