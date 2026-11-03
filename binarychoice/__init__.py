@@ -29,8 +29,8 @@ class C(BaseConstants):
     BLOCK_LENGTHS = [BLOCK1_LENGTH, BLOCK2_LENGTH, BLOCK3_LENGTH]
     NUM_BLOCKS = 3
     NUM_ROUNDS = BLOCK1_LENGTH + BLOCK2_LENGTH + BLOCK3_LENGTH
-    NUM_BLOCKS = 3
-    NUM_ROUNDS = BLOCK_LENGTH * NUM_BLOCKS  # 90
+    #NUM_BLOCKS = 3
+    #NUM_ROUNDS = BLOCK_LENGTH * NUM_BLOCKS  # 90
     # Discount levels (in %) drawn independently for each product on each trial in blocks 2 and 3.
     # 100 = full discount (free product). Change here if the range should be narrower.
     DISCOUNT_LEVELS = list(range(0, 101, 10))
