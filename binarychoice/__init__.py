@@ -21,7 +21,14 @@ class C(BaseConstants):
     # built-in constants
     NAME_IN_URL = 'multiattr_binarychoice'
     PLAYERS_PER_GROUP = None
-    BLOCK_LENGTH = 10
+    #BLOCK_LENGTH = 10
+    # Number of rounds in each block. They may differ between blocks; the total must not exceed 150.
+    BLOCK1_LENGTH = 30  # picture only
+    BLOCK2_LENGTH = 42  # picture + discount
+    BLOCK3_LENGTH = 78  # picture + discount + star reviews
+    BLOCK_LENGTHS = [BLOCK1_LENGTH, BLOCK2_LENGTH, BLOCK3_LENGTH]
+    NUM_BLOCKS = 3
+    NUM_ROUNDS = BLOCK1_LENGTH + BLOCK2_LENGTH + BLOCK3_LENGTH
     NUM_BLOCKS = 3
     NUM_ROUNDS = BLOCK_LENGTH * NUM_BLOCKS  # 90
     # Discount levels (in %) drawn independently for each product on each trial in blocks 2 and 3.
@@ -32,6 +39,12 @@ class C(BaseConstants):
 # ---------------------------------------------------------------------------
 # STIMULI
 # ---------------------------------------------------------------------------
+MAX_ROUNDS = 150
+assert C.NUM_ROUNDS <= MAX_ROUNDS, f'The blocks add up to {C.NUM_ROUNDS} rounds, more than the maximum of {MAX_ROUNDS}.'
+
+# First round of each block, e.g. [1, 31, 73] for block lengths [30, 42, 78]
+BLOCK_STARTS = [1 + sum(C.BLOCK_LENGTHS[:k]) for k in range(C.NUM_BLOCKS)]
+
 # Number of shoes per gender in pilot mode (session config pilot = 1)
 PILOT_N_SHOES = 20
 
