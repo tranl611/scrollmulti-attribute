@@ -376,7 +376,8 @@ class Instructions3(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.round_number == C.BLOCK_LENGTH + 1
+        #return player.round_number == C.BLOCK_LENGTH + 1
+        return player.round_number == BLOCK_STARTS[1]
 
 
 class Instructions4(Page):
@@ -384,7 +385,8 @@ class Instructions4(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.round_number == 2 * C.BLOCK_LENGTH + 1
+        #return player.round_number == 2 * C.BLOCK_LENGTH + 1
+        return player.round_number == BLOCK_STARTS[2]
 
 
 class PreDecision(Page):
@@ -618,7 +620,8 @@ class ResponseCurve(Page):
     def is_displayed(player: Player):
         session = player.session
         # display in pilot only for the first 3 rounds and the first round of blocks 2 and 3
-        first_of_block = player.round_number in (C.BLOCK_LENGTH + 1, 2 * C.BLOCK_LENGTH + 1)
+        #first_of_block = player.round_number in (C.BLOCK_LENGTH + 1, 2 * C.BLOCK_LENGTH + 1)
+        first_of_block = player.round_number in (BLOCK_STARTS[1], BLOCK_STARTS[2])
         return session.config['pilot'] == 1 and (player.round_number <= 3 or first_of_block)
 
     @staticmethod
