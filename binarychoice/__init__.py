@@ -110,10 +110,12 @@ def get_review(product_id, use_placeholder):
 # ---------------------------------------------------------------------------
 def condition_of_round(round_number):
     """1 = appearance only, 2 = + discount, 3 = + discount + star reviews."""
-    return (round_number - 1) // C.BLOCK_LENGTH + 1
+    #return (round_number - 1) // C.BLOCK_LENGTH + 1
+    return sum(1 for start in BLOCK_STARTS if round_number >= start)
 
 
-def build_pairs(shoeorder, shoeratings, block_length=C.BLOCK_LENGTH, num_blocks=C.NUM_BLOCKS, rng=random):
+#def build_pairs(shoeorder, shoeratings, block_length=C.BLOCK_LENGTH, num_blocks=C.NUM_BLOCKS, rng=random):
+def build_pairs(shoeorder, shoeratings, block_lengths=C.BLOCK_LENGTHS, rng=random):
     """
     Returns block_length*num_blocks pairs [shoeA, shoeB], ordered block by block.
     Within each block the rating differences (A - B, from the participant's own Part 1 ratings)
@@ -136,7 +138,8 @@ def build_pairs(shoeorder, shoeratings, block_length=C.BLOCK_LENGTH, num_blocks=
 
     used = set()
     pairs = []
-    for _ in range(num_blocks):
+    #for _ in range(num_blocks):
+    for block_length in block_lengths:
         n_even = block_length // len(levels_all)
         levels = levels_all * n_even
         levels += rng.sample(levels_all, block_length - len(levels))
@@ -156,7 +159,8 @@ def build_pairs(shoeorder, shoeratings, block_length=C.BLOCK_LENGTH, num_blocks=
 ATTRIBUTES_BY_CONDITION = {1: ['picture'], 2: ['picture', 'discount'], 3: ['picture', 'discount', 'stars']}
 
 
-def build_attribute_orders(block_length=C.BLOCK_LENGTH, num_blocks=C.NUM_BLOCKS, rng=random):
+#def build_attribute_orders(block_length=C.BLOCK_LENGTH, num_blocks=C.NUM_BLOCKS, rng=random):
+def build_attribute_orders(block_lengths=C.BLOCK_LENGTHS, rng=random):
     """
     One top-to-bottom order of the attributes for every round (a list of lists, block by block).
     Within each block every possible order is used equally often (block 2: 2 orders, block 3: 6 orders).
@@ -164,7 +168,8 @@ def build_attribute_orders(block_length=C.BLOCK_LENGTH, num_blocks=C.NUM_BLOCKS,
     The sequence is shuffled within each block, so the participant cannot predict the next order.
     """
     all_orders = []
-    for condition in range(1, num_blocks + 1):
+    #for condition in range(1, num_blocks + 1):
+    for condition, block_length in enumerate(block_lengths, start=1):
         perms = [list(q) for q in itertools.permutations(ATTRIBUTES_BY_CONDITION[condition])]
         reps, extra = divmod(block_length, len(perms))
         block = perms * reps + rng.sample(perms, extra)
