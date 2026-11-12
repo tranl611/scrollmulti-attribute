@@ -352,6 +352,7 @@ def creating_session(subsession: Subsession):
     _reviews_cache = None  # re-read shoe_reviews.csv so that the latest saved version is checked
     reviews = load_reviews()
     pilot = session.config['pilot']
+    shown = [s for gender in ('male', 'female') for s in shoe_list(gender, pilot)]
     show_n = show_number_of_reviews(session)
     missing = [s for s in shown if s not in reviews]
     invalid = [s for s in shown if s in reviews and not (
