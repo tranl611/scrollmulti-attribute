@@ -76,7 +76,8 @@ def shoe_list(gender, pilot):
 # ---------------------------------------------------------------------------
 # Real review data goes in shoe_reviews.csv (same folder as this file) with columns
 #   product_id, gender, avg_stars, n_reviews, source_url
-# Rows with a blank avg_stars or n_reviews are ignored.
+# Rows with a blank avg_stars are ignored. n_reviews may be left blank when the number of reviews is not shown
+# (session setting show_number_of_reviews = 0).
 REVIEWS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'shoe_reviews.csv')
 _reviews_cache = None
 
@@ -89,8 +90,13 @@ def load_reviews():
         if os.path.exists(REVIEWS_FILE):
             with open(REVIEWS_FILE, newline='', encoding='utf-8') as f:
                 for row in csv.DictReader(f):
+                    #try:
+                    #    data[int(row['product_id'])] = (float(row['avg_stars']), int(float(row['n_reviews'])))
+                    #except (ValueError, KeyError, TypeError):
+                    #    continue
                     try:
-                        data[int(row['product_id'])] = (float(row['avg_stars']), int(float(row['n_reviews'])))
+                        n = (row.get('n_reviews') or '').strip()
+                        data[int(row['product_id'])] = (float(row['avg_stars']), int(float(n)) if n else None)
                     except (ValueError, KeyError, TypeError):
                         continue
         _reviews_cache = data
@@ -114,7 +120,10 @@ def get_review(product_id, use_placeholder):
         )
     return reviews[product_id]
 
-
+def show_number_of_reviews(session):
+    """Session setting: 1 (default) = show '4.3 / 5 (57 reviews)', 0 = show the stars only."""
+    return bool(session.config.get('show_number_of_reviews', 1))
+  
 # ---------------------------------------------------------------------------
 # DESIGN LOGIC (pure functions, no oTree objects)
 # ---------------------------------------------------------------------------
@@ -249,7 +258,8 @@ def build_discount_diffs(pairs, shoeorder, shoeratings, block_lengths=C.BLOCK_LE
     return plan
 
 
-def draw_attributes(pair, condition, use_placeholder, discount_diff=0, rng=random):
+#def draw_attributes(pair, condition, use_placeholder, discount_diff=0, rng=random):
+def draw_attributes(pair, condition, use_placeholder, discount_diff=0, show_number=True, rng=random):
     """
     Extra attributes shown for the two products of this round.
     Discounts: two values inside the allowed range whose difference is the planned discount_diff
@@ -261,6 +271,8 @@ def draw_attributes(pair, condition, use_placeholder, discount_diff=0, rng=rando
     if condition >= 3:
         out['stars1'], out['nreviews1'] = get_review(pair[0], use_placeholder)
         out['stars2'], out['nreviews2'] = get_review(pair[1], use_placeholder)
+        if not show_number:  # stars only: the number of reviews is neither shown nor recorded
+            out['nreviews1'] = out['nreviews2'] = None
     return out
 
 
@@ -315,6 +327,7 @@ class Player(BasePlayer):
     thisround_nreviews1 = models.IntegerField()  # number of reviews, left product
     thisround_nreviews2 = models.IntegerField()
     reviews_placeholder = models.IntegerField()  # 1 = fake pilot reviews were shown
+    nreviews_shown = models.IntegerField()  # block 3: 1 = number of reviews shown with the stars, 0 = stars only
 
     # Randomized vertical order of image and attributes
     #attr_order = models.StringField()
@@ -339,15 +352,27 @@ def creating_session(subsession: Subsession):
     _reviews_cache = None  # re-read shoe_reviews.csv so that the latest saved version is checked
     reviews = load_reviews()
     pilot = session.config['pilot']
-    shown = [s for gender in ('male', 'female') for s in shoe_list(gender, pilot)]
+    show_n = show_number_of_reviews(session)
     missing = [s for s in shown if s not in reviews]
-    invalid = [s for s in shown if s in reviews and not (0 <= reviews[s][0] <= 5 and reviews[s][1] >= 0)]
+    invalid = [s for s in shown if s in reviews and not (
+        0 <= reviews[s][0] <= 5 and (reviews[s][1] is None and not show_n or reviews[s][1] is not None and reviews[s][1] >= 0))]
     if missing or invalid:
         raise RuntimeError(
             f'shoe_reviews.csv is not ready: {len(missing)} shoe(s) with no review data {missing[:20]}'
-            f'{" ..." if len(missing) > 20 else ""}; {len(invalid)} shoe(s) with stars outside 0-5 or a negative '
-            f'number of reviews {invalid[:20]}. Fix the file, or use use_placeholder_reviews=1 for a pilot.'
+            f'{" ..." if len(missing) > 20 else ""}; {len(invalid)} shoe(s) whose stars are not between 0 and 5 '
+            f'or whose number of reviews is negative or blank {invalid[:20]}. The number of reviews may be blank '
+            f'only if show_number_of_reviews = 0. Fix the file, or use use_placeholder_reviews=1 for a pilot.'
         )
+    
+    #shown = [s for gender in ('male', 'female') for s in shoe_list(gender, pilot)]
+    #missing = [s for s in shown if s not in reviews]
+    #invalid = [s for s in shown if s in reviews and not (0 <= reviews[s][0] <= 5 and reviews[s][1] >= 0)]
+    #if missing or invalid:
+    #    raise RuntimeError(
+    #        f'shoe_reviews.csv is not ready: {len(missing)} shoe(s) with no review data {missing[:20]}'
+    #        f'{" ..." if len(missing) > 20 else ""}; {len(invalid)} shoe(s) with stars outside 0-5 or a negative '
+    #        f'number of reviews {invalid[:20]}. Fix the file, or use use_placeholder_reviews=1 for a pilot.'
+    #    )
 
 # ---------------------------------------------------------------------------
 # PAGES
