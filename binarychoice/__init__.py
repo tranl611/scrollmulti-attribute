@@ -11,9 +11,9 @@ doc = """
 Binary choice with scroll tracking, multi-attribute version.
 Part 1: rate trainers (appearance only).
 Part 2: 90 rounds in three fixed-order blocks of 30 rounds:
-  block 1 (rounds  1-30): appearance only
-  block 2 (rounds 31-60): appearance + discount
-  block 3 (rounds 61-90): appearance + discount + star reviews
+  block 1 (rounds  1-24): appearance only
+  block 2 (rounds 25-60): appearance + discount
+  block 3 (rounds 61-120): appearance + discount + star reviews
 """
 
 
