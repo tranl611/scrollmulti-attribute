@@ -25,8 +25,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-<span class="reviews-text">{{ p.stars }} / 5{{ if p.show_n }} ({{ p.nreviews }} reviews){{ endif }}</span>
-/*.reviews-text { display: block; font-size: 0.85em; color: #555555; }*/
+.reviews-text { display: block; font-size: 0.85em; color: #555555; }
 /* styles.css fixes the card at 250px high and the container at 290px, which would clip the extra
    lines. Heights do not affect the horizontal scroll geometry (300px cards, 150px midpoint).
    The same taller card is used in all three blocks so that only the content differs. */
@@ -82,7 +81,8 @@
                 {{ if p.kind == 'stars' }}
                     <span class="attr">
                         <span class="stars" style="--rating: {{ p.stars }}"></span>
-                        <span class="reviews-text">{{ p.stars }} / 5 ({{ p.nreviews }} reviews)</span>
+                        <!-- <span class="reviews-text">{{ p.stars }} / 5 ({{ p.nreviews }} reviews)</span> -->
+						<span class="reviews-text">{{ p.stars }} / 5{{ if p.show_n }} ({{ p.nreviews }} reviews){{ endif }}</span>
                     </span>
                 {{ endif }}
             {{ endfor }}
