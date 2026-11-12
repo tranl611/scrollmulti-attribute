@@ -490,6 +490,10 @@ class Instructions4(Page):
         #return player.round_number == 2 * C.BLOCK_LENGTH + 1
         return player.round_number == BLOCK_STARTS[2]
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(show_n=show_number_of_reviews(player.session))
+
 
 class PreDecision(Page):
     form_model = 'player'
@@ -514,8 +518,10 @@ class PreDecision(Page):
         use_placeholder = bool(session.config.get('use_placeholder_reviews', 0))
         player.condition = condition_of_round(player.round_number)
         #attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder)
+        show_n = show_number_of_reviews(session)
+        attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder, discount_diff, show_n)
         discount_diff = ast.literal_eval(player.in_round(1).discount_diffs)[player.round_number - 1]
-        attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder, discount_diff)
+        #attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder, discount_diff)
         player.thisround_discountdiff = discount_diff if player.condition >= 2 else None
         player.thisround_discount1 = attrs.get('discount1')
         player.thisround_discount2 = attrs.get('discount2')
@@ -524,6 +530,7 @@ class PreDecision(Page):
         player.thisround_nreviews1 = attrs.get('nreviews1')
         player.thisround_nreviews2 = attrs.get('nreviews2')
         player.reviews_placeholder = int(use_placeholder and player.condition >= 3)
+        player.nreviews_shown = int(show_n) if player.condition >= 3 else None
 
         # Randomize the vertical order of the elements.
         # The same order is used for both shoe cards in this round.
@@ -566,7 +573,8 @@ class Decision(Page):
 
         show_discount = player.condition >= 2
         show_reviews = player.condition >= 3
-
+        show_n = show_number_of_reviews(player.session)
+      
         # Retrieve the randomized order saved for this round.
         #order = ast.literal_eval(player.attr_order)
         order = player.attr_order.split('>')
@@ -585,8 +593,11 @@ class Decision(Page):
                 #parts.append(dict(kind='discount', discount=discount))
 
             if show_reviews:
+                #available_parts['stars'] = {'kind': 'stars', 'stars': player.field_maybe_none(f'thisround_stars{idx}'),
+                #                            'nreviews': player.field_maybe_none(f'thisround_nreviews{idx}')}
                 available_parts['stars'] = {'kind': 'stars', 'stars': player.field_maybe_none(f'thisround_stars{idx}'),
-                                            'nreviews': player.field_maybe_none(f'thisround_nreviews{idx}')}
+                                            'nreviews': player.field_maybe_none(f'thisround_nreviews{idx}'),
+                                            'show_n': show_n}
                 #available_parts['stars'] = player.field_maybe_none(f'thisround_stars{idx}')
                 #nreviews = player.field_maybe_none(f'thisround_nreviews{idx}')
                 #parts.append(dict(kind='stars', stars=stars, nreviews=nreviews))
