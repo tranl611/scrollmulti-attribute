@@ -12,6 +12,7 @@ SESSION_CONFIGS = [
         prolificurl='',
         pilot=1,
         use_placeholder_reviews=1,
+        show_number_of_reviews=0,
     ),
     # REAL STUDY: all shoes, real reviews from binarychoice/shoe_reviews.csv (must be fully filled in)
     dict(
@@ -22,6 +23,7 @@ SESSION_CONFIGS = [
         prolificurl='',  # fill in the Prolific completion URL before collecting data
         pilot=0,
         use_placeholder_reviews=0,
+        show_number_of_reviews=0,
     ),
 ]
 
