@@ -6,7 +6,7 @@ App folder: `binarychoice/` (the oTree app). `settings.py`, `Procfile` and `requ
 
 | | Rounds | Shown on each swipe card | `condition` |
 |---|---|---|---|
-| Part 1 | – | rate every trainer from -3 to 3 (appearance only), unchanged | – |
+| Part 1 | – | rate every trainer from 1 to 7 (appearance only), unchanged | – |
 | Block 1 | 1-30 | picture (appearance) | 1 |
 | Block 2 | 31-60 | picture + discount ("40% off") | 2 |
 | Block 3 | 61-90 | picture + discount + star reviews | 3 |
