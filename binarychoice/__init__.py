@@ -97,20 +97,17 @@ def load_reviews():
     return _reviews_cache
 
 
-def placeholder_review(product_id):
-    """PILOT ONLY: deterministic fake review for a product (same for every participant/round)."""
-    r = random.Random(product_id)
-    return round(r.uniform(2.5, 5.0), 1), r.randint(3, 250)
+#def placeholder_review(product_id):
+#    """PILOT ONLY: deterministic fake review for a product (same for every participant/round)."""
+#    r = random.Random(product_id)
+#    return round(r.uniform(2.5, 5.0), 1), r.randint(3, 250)
 
 
-def get_review(product_id, use_placeholder):
-    if use_placeholder:
-        return placeholder_review(product_id)
+def get_review(product_id):
     reviews = load_reviews()
     if product_id not in reviews:
         raise RuntimeError(
-            f'No review data for product {product_id}. Fill in shoe_reviews.csv for all products, '
-            f'or set use_placeholder_reviews=1 in the session config (pilot only).'
+            f'No review data for product {product_id}. Fill in shoe_reviews.csv for all products.'
         )
     return reviews[product_id]
 
@@ -190,20 +187,6 @@ def build_attribute_orders(block_lengths=C.BLOCK_LENGTHS, rng=random):
         all_orders += block
     return all_orders
 
-#def draw_attributes(pair, condition, use_placeholder, rng=random):
-    """
-    Extra attributes shown for the two products of this round.
-    Discounts are drawn independently for each product and trial (independent of the rating).
-    Reviews are fixed per product (real data, or deterministic placeholder in pilot).
-    """
-#    out = {}
-#    if condition >= 2:
-#        out['discount1'] = rng.choice(C.DISCOUNT_LEVELS)
-#        out['discount2'] = rng.choice(C.DISCOUNT_LEVELS)
-#    if condition >= 3:
-#        out['stars1'], out['nreviews1'] = get_review(pair[0], use_placeholder)
-#        out['stars2'], out['nreviews2'] = get_review(pair[1], use_placeholder)
-#    return out
 
 def draw_discounts(diff, rng=random):
     """Discounts (left, right) in % whose difference (left minus right) is diff; both inside the allowed range."""
@@ -252,8 +235,7 @@ def build_discount_diffs(pairs, shoeorder, shoeratings, block_lengths=C.BLOCK_LE
     return plan
 
 
-#def draw_attributes(pair, condition, use_placeholder, discount_diff=0, rng=random):
-def draw_attributes(pair, condition, use_placeholder, discount_diff=0, show_number=True, rng=random):
+def draw_attributes(pair, condition, discount_diff=0, rng=random):
     """
     Extra attributes shown for the two products of this round.
     Discounts: two values inside the allowed range whose difference is the planned discount_diff
@@ -263,8 +245,8 @@ def draw_attributes(pair, condition, use_placeholder, discount_diff=0, show_numb
     if condition >= 2:
         out['discount1'], out['discount2'] = draw_discounts(discount_diff, rng)
     if condition >= 3:
-        out['stars1'], out['nreviews1'] = get_review(pair[0], use_placeholder)
-        out['stars2'], out['nreviews2'] = get_review(pair[1], use_placeholder)
+        out['stars1'], out['nreviews1'] = get_review(pair[0])
+        out['stars2'], out['nreviews2'] = get_review(pair[1])
         if not show_number:  # stars only: the number of reviews is neither shown nor recorded
             out['nreviews1'] = out['nreviews2'] = None
     return out
@@ -320,7 +302,6 @@ class Player(BasePlayer):
     thisround_stars2 = models.FloatField()
     thisround_nreviews1 = models.IntegerField()  # number of reviews, left product
     thisround_nreviews2 = models.IntegerField()
-    reviews_placeholder = models.IntegerField()  # 1 = fake pilot reviews were shown
     nreviews_shown = models.IntegerField()  # block 3: 1 = number of reviews shown with the stars, 0 = stars only
 
     # Randomized vertical order of image and attributes
@@ -337,8 +318,6 @@ def creating_session(subsession: Subsession):
     starts instead of at round 61.
     """
     session = subsession.session
-    if session.config.get('use_placeholder_reviews', 0):
-        return
     global _reviews_cache
     _reviews_cache = None  # re-read shoe_reviews.csv so that the latest saved version is checked
     reviews = load_reviews()
@@ -353,18 +332,9 @@ def creating_session(subsession: Subsession):
             f'shoe_reviews.csv is not ready: {len(missing)} shoe(s) with no review data {missing[:20]}'
             f'{" ..." if len(missing) > 20 else ""}; {len(invalid)} shoe(s) whose stars are not between 0 and 5 '
             f'or whose number of reviews is negative or blank {invalid[:20]}. The number of reviews may be blank '
-            f'only if show_number_of_reviews = 0. Fix the file, or use use_placeholder_reviews=1 for a pilot.'
+            f'only if show_number_of_reviews = 0. Fix the file.'
         )
-    
-    #shown = [s for gender in ('male', 'female') for s in shoe_list(gender, pilot)]
-    #missing = [s for s in shown if s not in reviews]
-    #invalid = [s for s in shown if s in reviews and not (0 <= reviews[s][0] <= 5 and reviews[s][1] >= 0)]
-    #if missing or invalid:
-    #    raise RuntimeError(
-    #        f'shoe_reviews.csv is not ready: {len(missing)} shoe(s) with no review data {missing[:20]}'
-    #        f'{" ..." if len(missing) > 20 else ""}; {len(invalid)} shoe(s) with stars outside 0-5 or a negative '
-    #        f'number of reviews {invalid[:20]}. Fix the file, or use use_placeholder_reviews=1 for a pilot.'
-    #    )
+
 
 # ---------------------------------------------------------------------------
 # PAGES
@@ -506,13 +476,11 @@ class PreDecision(Page):
         player.thisround_valuedifference = player.thisround_shoe1rating - player.thisround_shoe2rating
 
         # Block / condition and the extra attributes shown in this round
-        use_placeholder = bool(session.config.get('use_placeholder_reviews', 0))
         player.condition = condition_of_round(player.round_number)
-        #attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder)
         show_n = show_number_of_reviews(session)
         #discount_diff = ast.literal_eval(player.in_round(1).discount_diffs)[player.round_number - 1]
         discount_diff = player.participant.vars['discount_diffs'][player.round_number - 1]
-        attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder, discount_diff, show_n)
+        attrs = draw_attributes(thisround_shoepair, player.condition, discount_diff, show_n)
         player.thisround_discountdiff = discount_diff if player.condition >= 2 else None
         player.thisround_discount1 = attrs.get('discount1')
         player.thisround_discount2 = attrs.get('discount2')
@@ -520,7 +488,6 @@ class PreDecision(Page):
         player.thisround_stars2 = attrs.get('stars2')
         player.thisround_nreviews1 = attrs.get('nreviews1')
         player.thisround_nreviews2 = attrs.get('nreviews2')
-        player.reviews_placeholder = int(use_placeholder and player.condition >= 3)
         player.nreviews_shown = int(show_n) if player.condition >= 3 else None
 
         order = ast.literal_eval(player.in_round(1).attr_orders)[player.round_number - 1]
