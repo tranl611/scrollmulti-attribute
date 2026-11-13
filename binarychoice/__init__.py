@@ -75,33 +75,21 @@ def shoe_list(gender, pilot):
 # (session setting show_number_of_reviews = 0).
 REVIEWS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'shoe_reviews.csv')
 _reviews_cache = None
-
+  
 def load_reviews():
-    """Returns {product_id: (avg_stars, n_reviews)}; empty dict if the file is missing/unfilled."""
+    """Returns {product_id: avg_stars}; empty dict if the file is missing/unfilled."""
     global _reviews_cache
     if _reviews_cache is None:
         data = {}
         if os.path.exists(REVIEWS_FILE):
             with open(REVIEWS_FILE, newline='', encoding='utf-8') as f:
                 for row in csv.DictReader(f):
-                    #try:
-                    #    data[int(row['product_id'])] = (float(row['avg_stars']), int(float(row['n_reviews'])))
-                    #except (ValueError, KeyError, TypeError):
-                    #    continue
                     try:
-                        n = (row.get('n_reviews') or '').strip()
-                        data[int(row['product_id'])] = (float(row['avg_stars']), int(float(n)) if n else None)
+                        data[int(row['product_id'])] = float(row['avg_stars'])
                     except (ValueError, KeyError, TypeError):
                         continue
         _reviews_cache = data
     return _reviews_cache
-
-
-#def placeholder_review(product_id):
-#    """PILOT ONLY: deterministic fake review for a product (same for every participant/round)."""
-#    r = random.Random(product_id)
-#    return round(r.uniform(2.5, 5.0), 1), r.randint(3, 250)
-
 
 def get_review(product_id):
     reviews = load_reviews()
@@ -110,10 +98,6 @@ def get_review(product_id):
             f'No review data for product {product_id}. Fill in shoe_reviews.csv for all products.'
         )
     return reviews[product_id]
-
-def show_number_of_reviews(session):
-    """Session setting: 1 (default) = show '4.3 / 5 (57 reviews)', 0 = show the stars only."""
-    return bool(session.config.get('show_number_of_reviews', 1))
   
 # ---------------------------------------------------------------------------
 # DESIGN LOGIC (pure functions, no oTree objects)
@@ -234,23 +218,14 @@ def build_discount_diffs(pairs, shoeorder, shoeratings, block_lengths=C.BLOCK_LE
         plan += [size * sign for size, sign in zip(sizes, signs)]
     return plan
 
-
 def draw_attributes(pair, condition, discount_diff=0, rng=random):
-    """
-    Extra attributes shown for the two products of this round.
-    Discounts: two values inside the allowed range whose difference is the planned discount_diff
-    (see build_discount_diffs). Reviews are fixed per product (real data, or deterministic placeholder in pilot).
-    """
     out = {}
     if condition >= 2:
         out['discount1'], out['discount2'] = draw_discounts(discount_diff, rng)
     if condition >= 3:
-        out['stars1'], out['nreviews1'] = get_review(pair[0])
-        out['stars2'], out['nreviews2'] = get_review(pair[1])
-        if not show_number:  # stars only: the number of reviews is neither shown nor recorded
-            out['nreviews1'] = out['nreviews2'] = None
+        out['stars1'] = get_review(pair[0])
+        out['stars2'] = get_review(pair[1])
     return out
-
 
 # ---------------------------------------------------------------------------
 # MODELS
@@ -300,9 +275,6 @@ class Player(BasePlayer):
     #discount_diffs = models.StringField()  # round 1 only: the planned discount difference for every round
     thisround_stars1 = models.FloatField()  # average star rating, left product
     thisround_stars2 = models.FloatField()
-    thisround_nreviews1 = models.IntegerField()  # number of reviews, left product
-    thisround_nreviews2 = models.IntegerField()
-    nreviews_shown = models.IntegerField()  # block 3: 1 = number of reviews shown with the stars, 0 = stars only
 
     # Randomized vertical order of image and attributes
     attr_order = models.StringField()
@@ -323,16 +295,13 @@ def creating_session(subsession: Subsession):
     reviews = load_reviews()
     pilot = session.config['pilot']
     shown = [s for gender in ('male', 'female') for s in shoe_list(gender, pilot)]
-    show_n = show_number_of_reviews(session)
     missing = [s for s in shown if s not in reviews]
-    invalid = [s for s in shown if s in reviews and not (
-        0 <= reviews[s][0] <= 5 and (reviews[s][1] is None and not show_n or reviews[s][1] is not None and reviews[s][1] >= 0))]
+    invalid = [s for s in shown if s in reviews and not 0 <= reviews[s] <= 5]
     if missing or invalid:
         raise RuntimeError(
             f'shoe_reviews.csv is not ready: {len(missing)} shoe(s) with no review data {missing[:20]}'
             f'{" ..." if len(missing) > 20 else ""}; {len(invalid)} shoe(s) whose stars are not between 0 and 5 '
-            f'or whose number of reviews is negative or blank {invalid[:20]}. The number of reviews may be blank '
-            f'only if show_number_of_reviews = 0. Fix the file.'
+            f'{invalid[:20]}. Fix the file.'
         )
 
 
@@ -451,10 +420,6 @@ class Instructions4(Page):
         #return player.round_number == 2 * C.BLOCK_LENGTH + 1
         return player.round_number == BLOCK_STARTS[2]
 
-    @staticmethod
-    def vars_for_template(player: Player):
-        return dict(show_n=show_number_of_reviews(player.session))
-
 
 class PreDecision(Page):
     form_model = 'player'
@@ -477,19 +442,14 @@ class PreDecision(Page):
 
         # Block / condition and the extra attributes shown in this round
         player.condition = condition_of_round(player.round_number)
-        show_n = show_number_of_reviews(session)
         #discount_diff = ast.literal_eval(player.in_round(1).discount_diffs)[player.round_number - 1]
         discount_diff = player.participant.vars['discount_diffs'][player.round_number - 1]
-        attrs = draw_attributes(thisround_shoepair, player.condition, discount_diff, show_n)
+        attrs = draw_attributes(thisround_shoepair, player.condition, discount_diff)
         player.thisround_discountdiff = discount_diff if player.condition >= 2 else None
         player.thisround_discount1 = attrs.get('discount1')
         player.thisround_discount2 = attrs.get('discount2')
         player.thisround_stars1 = attrs.get('stars1')
         player.thisround_stars2 = attrs.get('stars2')
-        player.thisround_nreviews1 = attrs.get('nreviews1')
-        player.thisround_nreviews2 = attrs.get('nreviews2')
-        player.nreviews_shown = int(show_n) if player.condition >= 3 else None
-
         order = ast.literal_eval(player.in_round(1).attr_orders)[player.round_number - 1]
 
         # Save the order and the position of each attribute (1 = top) in the dataset.
@@ -515,10 +475,8 @@ class Decision(Page):
 
         show_discount = player.condition >= 2
         show_reviews = player.condition >= 3
-        show_n = show_number_of_reviews(player.session)
       
         # Retrieve the randomized order saved for this round.
-        #order = ast.literal_eval(player.attr_order)
         order = player.attr_order.split('>')
       
         # Build the two cards in their existing left-to-right order.
@@ -532,9 +490,8 @@ class Decision(Page):
                                                'discount': player.field_maybe_none(f'thisround_discount{idx}')}
 
             if show_reviews:
-                available_parts['stars'] = {'kind': 'stars', 'stars': player.field_maybe_none(f'thisround_stars{idx}'),
-                                            'nreviews': player.field_maybe_none(f'thisround_nreviews{idx}'),
-                                            'show_n': show_n}
+                available_parts['stars'] = {'kind': 'stars', 
+                                            'stars': player.field_maybe_none(f'thisround_stars{idx}')}
 
             # Apply the same randomized order to both cards.
             parts = [available_parts[kind] for kind in order]
