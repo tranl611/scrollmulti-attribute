@@ -448,7 +448,7 @@ class PreDecision(Page):
         player.thisround_discount2 = attrs.get('discount2')
         player.thisround_stars1 = attrs.get('stars1')
         player.thisround_stars2 = attrs.get('stars2')
-        order = ast.literal_eval(player.in_round(1).attr_orders)[player.round_number - 1]
+        #order = ast.literal_eval(player.in_round(1).attr_orders)[player.round_number - 1]
         order = ast.literal_eval(player.participant.vars['attr_orders'])[player.round_number - 1]
 
         # Save the order and the position of each attribute (1 = top) in the dataset.
