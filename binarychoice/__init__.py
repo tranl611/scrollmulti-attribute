@@ -76,7 +76,6 @@ def shoe_list(gender, pilot):
 REVIEWS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'shoe_reviews.csv')
 _reviews_cache = None
 
-
 def load_reviews():
     """Returns {product_id: (avg_stars, n_reviews)}; empty dict if the file is missing/unfilled."""
     global _reviews_cache
@@ -316,7 +315,7 @@ class Player(BasePlayer):
     thisround_discount1 = models.IntegerField()  # % off, left product (blank when not shown)
     thisround_discount2 = models.IntegerField()  # % off, right product
     thisround_discountdiff = models.IntegerField()  # left minus right discount, percentage points (blank in block 1)
-    discount_diffs = models.StringField()  # round 1 only: the planned discount difference for every round
+    #discount_diffs = models.StringField()  # round 1 only: the planned discount difference for every round
     thisround_stars1 = models.FloatField()  # average star rating, left product
     thisround_stars2 = models.FloatField()
     thisround_nreviews1 = models.IntegerField()  # number of reviews, left product
@@ -325,9 +324,6 @@ class Player(BasePlayer):
     nreviews_shown = models.IntegerField()  # block 3: 1 = number of reviews shown with the stars, 0 = stars only
 
     # Randomized vertical order of image and attributes
-    #attr_order = models.StringField()
-    #attr_order = models.StringField()  # this round, top to bottom, e.g. 'star>picture>discount'
-    #attr_orders = models.StringField()  # round 1 only: the planned order for every round
     attr_order = models.StringField()
     attr_orders = models.StringField()
     pos_picture = models.IntegerField()  # 1 = topmost line on the card, 2 = second, 3 = third
@@ -456,7 +452,8 @@ class Preference(Page):
         pairs = build_pairs(shoeorder, shoeratings)
         player.shoepairs = str(pairs)
         player.attr_orders = str(build_attribute_orders())
-        player.discount_diffs = str(build_discount_diffs(pairs, shoeorder, shoeratings))
+        #player.discount_diffs = str(build_discount_diffs(pairs, shoeorder, shoeratings))
+        player.participant.vars['discount_diffs'] = build_discount_diffs(pairs, shoeorder, shoeratings)
         
 
 class Instructions2(Page):
@@ -513,7 +510,8 @@ class PreDecision(Page):
         player.condition = condition_of_round(player.round_number)
         #attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder)
         show_n = show_number_of_reviews(session)
-        discount_diff = ast.literal_eval(player.in_round(1).discount_diffs)[player.round_number - 1]
+        #discount_diff = ast.literal_eval(player.in_round(1).discount_diffs)[player.round_number - 1]
+        discount_diff = player.participant.vars['discount_diffs'][player.round_number - 1]
         attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder, discount_diff, show_n)
         player.thisround_discountdiff = discount_diff if player.condition >= 2 else None
         player.thisround_discount1 = attrs.get('discount1')
