@@ -6,13 +6,11 @@ SESSION_CONFIGS = [
     # PILOT: 20 shoes per gender, fake (deterministic) star reviews, response-curve page shown
     dict(
         name='multiattr_pilot',
-        display_name='Multi-attribute PILOT (placeholder reviews)',
+        display_name='Multi-attribute PILOT (20 shoes)',
         num_demo_participants=1,
         app_sequence=['binarychoice'],
         prolificurl='',
         pilot=1,
-        use_placeholder_reviews=1,
-        show_number_of_reviews=1,
     ),
     # REAL STUDY: all shoes, real reviews from binarychoice/shoe_reviews.csv, no number of reviews (must be fully filled in)
     dict(
@@ -22,8 +20,6 @@ SESSION_CONFIGS = [
         app_sequence=['binarychoice'],
         prolificurl='',  # fill in the Prolific completion URL before collecting data
         pilot=0,
-        use_placeholder_reviews=0,
-        show_number_of_reviews=0,
     ),
 ]
 
