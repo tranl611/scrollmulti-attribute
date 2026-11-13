@@ -17,7 +17,7 @@ SESSION_CONFIGS = [
     # REAL STUDY: all shoes, real reviews from binarychoice/shoe_reviews.csv, no number of reviews (must be fully filled in)
     dict(
         name='multiattr_study_FINAL',
-        display_name='Multi-attribute-final STUDY ',
+        display_name='Multi-attribute FINAL STUDY ',
         num_demo_participants=None,
         app_sequence=['binarychoice'],
         prolificurl='',  # fill in the Prolific completion URL before collecting data
