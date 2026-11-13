@@ -21,7 +21,6 @@ class C(BaseConstants):
     # built-in constants
     NAME_IN_URL = 'multiattr_binarychoice'
     PLAYERS_PER_GROUP = None
-    #BLOCK_LENGTH = 10
     # Number of rounds in each block. They may differ between blocks; the total must not exceed 150.
     BLOCK1_LENGTH = 24  # picture only
     BLOCK2_LENGTH = 36  # picture + discount
@@ -29,11 +28,6 @@ class C(BaseConstants):
     BLOCK_LENGTHS = [BLOCK1_LENGTH, BLOCK2_LENGTH, BLOCK3_LENGTH]
     NUM_BLOCKS = 3
     NUM_ROUNDS = BLOCK1_LENGTH + BLOCK2_LENGTH + BLOCK3_LENGTH
-    #NUM_BLOCKS = 3
-    #NUM_ROUNDS = BLOCK_LENGTH * NUM_BLOCKS  # 90
-    # Discount levels (in %) drawn independently for each product on each trial in blocks 2 and 3.
-    # 100 = full discount (free product). Change here if the range should be narrower.
-    #DISCOUNT_LEVELS = list(range(0, 101, 10))
     # Discounts (in %) shown in blocks 2 and 3. Every discount is between DISCOUNT_MIN and DISCOUNT_MAX,
     # in steps of DISCOUNT_STEP (10, 15, ..., 60). No 0% and no 100%.
     DISCOUNT_MIN = 10
@@ -56,7 +50,7 @@ assert all(x % C.DISCOUNT_STEP == 0 and abs(x) <= C.DISCOUNT_MAX - C.DISCOUNT_MI
 BLOCK_STARTS = [1 + sum(C.BLOCK_LENGTHS[:k]) for k in range(C.NUM_BLOCKS)]
 
 # Number of shoes per gender in pilot mode (session config pilot = 1)
-N_SHOES = 40
+N_SHOES = 90
 PILOT_N_SHOES = 20
 
 MALE_SHOES = [15147403, 12100503, 21001440, 12126140, 15133340, 16105627, 11798240, 12000002, 21228230, 15139716, 13149303, 11028927, 16105644, 16105601, 13138103, 12134602, 13149026, 16105699, 16105621, 12126103, 12254302, 12100540, 21001403, 16106103, 16105640, 11798203, 12000041, 16105642, 13149340, 13149041, 13123926, 15153203, 21153118, 13141627, 12000001, 12141001, 13149003, 13107203, 13149027, 13107227, 13123940, 12131399, 13141603, 12126143, 13149018, 12102121, 12105399, 12141003, 12105340, 13107201, 16105602, 13141625, 12000003, 21228208, 12131303, 13107240, 16105683, 12105301, 12100522, 13149040, 12126119, 12100402, 12257527, 13141640, 13123903, 13149099, 15146618, 12126147, 15112718, 15395841, 13149103, 12102103, 12000040, 13110730, 21060740, 12105303, 13110701, 16105608, 15148701, 12237827, 21005915, 13110703, 21010103, 15395740, 12237803, 15111704, 11795703, 13138640, 15101627, 13153740, 12126172, 12887143, 13145640, 21060826, 21073718, 13149032, 13106703, 15111706, 13149069, 12672703, 13100640, 15156141, 13110702, 12141037, 13149072, 21073501, 15148724, 12106926, 12672740, 13149033, 12141074, 15156201, 12887140, 13117908, 11028930]
@@ -455,7 +449,6 @@ class Preference(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
-        # Here the 90 pairs (3 blocks x 30) are created from the participant's own ratings
         shoeorder = ast.literal_eval(player.shoeorder)
         shoeratings = ast.literal_eval(player.shoeratings)
         #player.shoepairs = str(build_pairs(shoeorder, shoeratings))
@@ -464,7 +457,6 @@ class Preference(Page):
         player.shoepairs = str(pairs)
         player.attr_orders = str(build_attribute_orders())
         player.discount_diffs = str(build_discount_diffs(pairs, shoeorder, shoeratings))
-        # the pair for each round can now be found in player.in_round(1).shoepairs
         
 
 class Instructions2(Page):
@@ -523,7 +515,6 @@ class PreDecision(Page):
         show_n = show_number_of_reviews(session)
         discount_diff = ast.literal_eval(player.in_round(1).discount_diffs)[player.round_number - 1]
         attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder, discount_diff, show_n)
-        #attrs = draw_attributes(thisround_shoepair, player.condition, use_placeholder, discount_diff)
         player.thisround_discountdiff = discount_diff if player.condition >= 2 else None
         player.thisround_discount1 = attrs.get('discount1')
         player.thisround_discount2 = attrs.get('discount2')
@@ -534,22 +525,6 @@ class PreDecision(Page):
         player.reviews_placeholder = int(use_placeholder and player.condition >= 3)
         player.nreviews_shown = int(show_n) if player.condition >= 3 else None
 
-        # Randomize the vertical order of the elements.
-        # The same order is used for both shoe cards in this round.
-        #order = ['picture']
-
-        #if player.condition >= 2:
-        #    order.append('discount')
-
-        #if player.condition >= 3:
-        #    order.append('stars')
-
-        #random.shuffle(order)
-
-        # Save the order in the dataset.
-        #player.attr_order = str(order)
-        # Vertical order of the elements in this round, taken from the balanced list made in Preference.
-        # The same order is used for both shoe cards.
         order = ast.literal_eval(player.in_round(1).attr_orders)[player.round_number - 1]
 
         # Save the order and the position of each attribute (1 = top) in the dataset.
@@ -586,23 +561,15 @@ class Decision(Page):
 
         for idx, shoe_id in enumerate(shoepair, start=1):
             available_parts = {'picture': {'kind': 'picture', 'image': url + str(shoe_id) + '_h.jpg'}}
-            #available_parts = [dict(kind='picture', image=url + str(shoe_id) + '_h.jpg')]
 
             if show_discount:
                 available_parts['discount'] = {'kind': 'discount', 
                                                'discount': player.field_maybe_none(f'thisround_discount{idx}')}
-                #available_parts['discount'] = player.field_maybe_none(f'thisround_discount{idx}')
-                #parts.append(dict(kind='discount', discount=discount))
 
             if show_reviews:
-                #available_parts['stars'] = {'kind': 'stars', 'stars': player.field_maybe_none(f'thisround_stars{idx}'),
-                #                            'nreviews': player.field_maybe_none(f'thisround_nreviews{idx}')}
                 available_parts['stars'] = {'kind': 'stars', 'stars': player.field_maybe_none(f'thisround_stars{idx}'),
                                             'nreviews': player.field_maybe_none(f'thisround_nreviews{idx}'),
                                             'show_n': show_n}
-                #available_parts['stars'] = player.field_maybe_none(f'thisround_stars{idx}')
-                #nreviews = player.field_maybe_none(f'thisround_nreviews{idx}')
-                #parts.append(dict(kind='stars', stars=stars, nreviews=nreviews))
 
             # Apply the same randomized order to both cards.
             parts = [available_parts[kind] for kind in order]
@@ -615,24 +582,6 @@ class Decision(Page):
             show_reviews=show_reviews
         )
       
-        #return dict(
-            #shoeimage1='https://www.sportsdirect.com/images/products/' + str(shoepair[0]) + '_h.jpg',
-            #shoeimage2='https://www.sportsdirect.com/images/products/' + str(shoepair[1]) + '_h.jpg',
-            #shoeimage1='https://users.aalto.fi/ileppane/shoepictures2026/men/' + str(shoepair[0]) + '_h.jpg',
-            #shoeimage2='https://users.aalto.fi/ileppane/shoepictures2026/women/' + str(shoepair[1]) + '_h.jpg',
-        #    shoeimage1=url + str(shoepair[0]) + '_h.jpg',
-        #    shoeimage2=url + str(shoepair[1]) + '_h.jpg',
-        #    beginning=player.round_number <= 3,
-        #    show_discount=player.condition >= 2,
-        #    show_reviews=player.condition >= 3,
-            # these are empty (None) in blocks where the attribute is not shown, hence field_maybe_none
-        #    discount1=player.field_maybe_none('thisround_discount1'),
-        #    discount2=player.field_maybe_none('thisround_discount2'),
-        #    stars1=player.field_maybe_none('thisround_stars1'),
-        #    stars2=player.field_maybe_none('thisround_stars2'),
-        #    nreviews1=player.field_maybe_none('thisround_nreviews1'),
-        #    nreviews2=player.field_maybe_none('thisround_nreviews2'),
-        #)
 
     @staticmethod
     def js_vars(player: Player):
