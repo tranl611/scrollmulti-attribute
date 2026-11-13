@@ -56,8 +56,10 @@
                 {{ if p.kind == 'stars' }}
                     <span class="attr">
                         <span class="stars" style="--rating: {{ p.stars }}"></span>
-                        <!-- <span class="reviews-text">{{ p.stars }} / 5 ({{ p.nreviews }} reviews)</span> -->
-						<span class="reviews-text">{{ p.stars }} / 5{{ if p.show_n }} ({{ p.nreviews }} reviews){{ endif }}</span>
+                        <!-- <span class="reviews-text">{{ p.stars }} / 5 ({{ p.nreviews }} reviews)</span> 
+						<span class="reviews-text">{{ p.stars }} / 5{{ if p.show_n }} ({{ p.nreviews }} reviews){{ endif }}</span> -->
+						<span class="reviews-text">{{ p.stars }} / 5 stars{{ if p.show_n }} ({{ p.nreviews }} reviews){{ endif }}</span>
+						
                     </span>
                 {{ endif }}
             {{ endfor }}
