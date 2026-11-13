@@ -16,25 +16,14 @@ SESSION_CONFIGS = [
     ),
     # REAL STUDY: all shoes, real reviews from binarychoice/shoe_reviews.csv, no number of reviews (must be fully filled in)
     dict(
-        name='multiattr_study_1',
-        display_name='Multi-attribute STUDY NO No.REVIEWS',
+        name='multiattr_study_FINAL',
+        display_name='Multi-attribute-final STUDY ',
         num_demo_participants=None,
         app_sequence=['binarychoice'],
         prolificurl='',  # fill in the Prolific completion URL before collecting data
         pilot=0,
         use_placeholder_reviews=0,
         show_number_of_reviews=0,
-    ),
-    # REAL STUDY: all shoes, real reviews from binarychoice/shoe_reviews.csv, show number of reviews_ (must be fully filled in)
-    dict(
-        name='multiattr_study_2',
-        display_name='Multi-attribute STUDY WITH No.REVIEWS',
-        num_demo_participants=None,
-        app_sequence=['binarychoice'],
-        prolificurl='',  # fill in the Prolific completion URL before collecting data
-        pilot=0,
-        use_placeholder_reviews=0,
-        show_number_of_reviews=1,
     ),
 ]
 
