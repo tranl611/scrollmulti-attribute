@@ -278,7 +278,7 @@ class Player(BasePlayer):
 
     # Randomized vertical order of image and attributes
     attr_order = models.StringField()
-    attr_orders = models.StringField()
+    #attr_orders = models.StringField()
     pos_picture = models.IntegerField()  # 1 = topmost line on the card, 2 = second, 3 = third
     pos_discount = models.IntegerField()  # empty when the attribute is not shown in this block
     pos_stars = models.IntegerField()
@@ -386,11 +386,9 @@ class Preference(Page):
     def before_next_page(player: Player, timeout_happened):
         shoeorder = ast.literal_eval(player.shoeorder)
         shoeratings = ast.literal_eval(player.shoeratings)
-        #player.shoepairs = str(build_pairs(shoeorder, shoeratings))
-        #player.attr_orders = str(build_attribute_orders())
         pairs = build_pairs(shoeorder, shoeratings)
         player.shoepairs = str(pairs)
-        player.attr_orders = str(build_attribute_orders())
+        player.participant.vars['attr_orders'] = str(build_attribute_orders())
         #player.discount_diffs = str(build_discount_diffs(pairs, shoeorder, shoeratings))
         player.participant.vars['discount_diffs'] = build_discount_diffs(pairs, shoeorder, shoeratings)
         
@@ -451,6 +449,7 @@ class PreDecision(Page):
         player.thisround_stars1 = attrs.get('stars1')
         player.thisround_stars2 = attrs.get('stars2')
         order = ast.literal_eval(player.in_round(1).attr_orders)[player.round_number - 1]
+        order = ast.literal_eval(player.participant.vars['attr_orders'])[player.round_number - 1]
 
         # Save the order and the position of each attribute (1 = top) in the dataset.
         player.attr_order = '>'.join(order)
