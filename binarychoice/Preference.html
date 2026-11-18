@@ -1,6 +1,13 @@
 {{ extends "global/Page.html" }}
 {{ block title }}Part 1: Product rating task{{ endblock }}
 
+{{ block styles }}
+<style>
+/* smaller photos on the rating page: at most 230px wide (the same as in Part 2) and at most 40% of the screen height */
+.fitting-image { width: auto; max-width: 230px; max-height: 40vh; }
+</style>
+{{ endblock }}
+
 {{ block content }}
 
 <p>
