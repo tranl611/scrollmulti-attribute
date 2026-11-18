@@ -36,7 +36,7 @@
 .compact .imgwrap { margin: 4px auto; }
 .compact .attr { margin: 6px auto; }
 .compact .imgwrap .fitting-image2 { width: auto; max-width: 230px; max-height: var(--img-h); margin: calc(-1 * var(--img-up)) auto 0 auto; }
-.compact #choiceindicator { margin-bottom: 4px; }
+.compact #choiceindicator { margin-bottom: 12px; }
 .compact #choiceindicator br + br { display: none; }
 .compact #choicebutton1, .compact #choicebutton2 { padding-top: 6px; padding-bottom: 6px; }
 .compact .powered-by-otree { margin-top: 8px; }
@@ -47,7 +47,7 @@
 (function () {
     var vh = window.innerHeight, root = document.documentElement;
     if (vh < 700) {
-        var cardH = Math.max(220, Math.min(360, vh - 200));   // 200px = everything else on the page
+        var cardH = Math.max(220, Math.min(360, vh - 208));   // 208px = everything else on the page
         var imgH = Math.max(100, cardH - 105);                 // photo height that leaves room for the discount and stars lines
         root.classList.add('compact');
         root.style.setProperty('--card-h', cardH + 'px');
