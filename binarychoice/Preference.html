@@ -1,12 +1,20 @@
 {{ extends "global/Page.html" }}
 {{ block title }}Part 1: Product rating task{{ endblock }}
 
-/* {{ block styles }}
+{{ block styles }}
 <style>
-/* smaller photos on the rating page: at most 230px wide (the same as in Part 2) and at most 40% of the screen height */
-.fitting-image { width: auto; max-width: 230px; max-height: 40vh; }
+/* photo: sized relative to the screen. Width = 64% of the screen width (230px on a 360px-wide phone, the same as in Part 2),
+   never wider than 300px; height at most 40% of the screen height. Centred over the rating row. */
+.fitting-image { display: block; margin: 0 auto 8px auto; width: auto;
+                 max-width: 230px;                /* fallback for very old browsers that do not know min() */
+                 max-width: min(64vw, 300px);
+                 max-height: 40vh; }
+.fitting-image + br { display: none; }
+/* rating row: shrinks to the screen width instead of a fixed 300px, 7 equal columns */
+.whitebordertable, .redbordertable { width: 100%; max-width: 300px; margin: 0 auto; table-layout: fixed; }
+.whitebordertable td, .redbordertable td { width: 14.28%; }
 </style>
-{{ endblock }}*/
+{{ endblock }}
 
 {{ block content }}
 
