@@ -61,7 +61,7 @@
 {{ block content }}
 
 
-<div id="generaldiv">
+<!-- <div id="generaldiv">
     {{ if player.round_number < 3 }}
         <p>
             Swipe the boxes
@@ -70,6 +70,8 @@
 </div>
 
 <br>
+--> 
+
 <div id="myDIV" class="container3 x-scroll x-mandatory" onscroll="scrolltrack()">
     {{ for card in cards }}
     <div class="element3">
@@ -107,9 +109,9 @@
 <center>
     <p id="choiceindicator">
         <span id="yourchoice"></span>
+        <!-- <br>
         <br>
-        <br>
-            {{ if beginning }} Your choice: {{ endif }}
+            {{ if beginning }} Your choice: {{ endif }} -->
     </p>
 
     <button id="choicebutton1" name="choice" value="1">A</button>
